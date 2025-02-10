@@ -11,9 +11,7 @@
     font-family: 'Supreme';
     src:
         local("Supreme Variable"),
-        url('./fonts/Supreme-Variable.woff2') format('woff2'),
-        url('./fonts/Supreme-Variable.woff') format('woff'),
-        url('./fonts/Supreme-Variable.ttf') format('truetype');
+        url('/fonts/Supreme-Variable.woff2') format('woff2');
     font-weight: 100 800;
     font-display: swap;
     font-style: normal;
@@ -22,9 +20,7 @@
     font-family: 'Supreme';
     src:
         local("Supreme Variable"),
-        url('./fonts/Supreme-VariableItalic.woff2') format('woff2'),
-        url('./fonts/Supreme-VariableItalic.woff') format('woff'),
-        url('/fonts/Supreme-VariableItalic.ttf') format('truetype');
+        url('/fonts/Supreme-VariableItalic.woff2') format('woff2');
     font-weight: 100 800;
     font-display: swap;
     font-style: italic;
@@ -33,9 +29,7 @@
     font-family: 'Chubbo';
     src:
         local("Chubbo Variable"),
-        url('./fonts/Chubbo-Variable.woff2') format('woff2'),
-        url('/fonts/Chubbo-Variable.woff') format('woff'),
-        url('/fonts/Chubbo-Variable.ttf') format('truetype');
+        url('/fonts/Chubbo-Variable.woff2') format('woff2');
     font-weight: 200 700;
     font-display: swap;
     font-style: normal;
@@ -44,9 +38,7 @@
     font-family: 'Chubbo';
     src:
         local("Chubbo Variable"),
-        url('./fonts/Chubbo-VariableItalic.woff2') format('woff2'),
-        url('./fonts/Chubbo-VariableItalic.woff') format('woff'),
-        url('./fonts/Chubbo-VariableItalic.ttf') format('truetype');
+        url('/fonts/Chubbo-VariableItalic.woff2') format('woff2');
     font-weight: 200 700;
     font-display: swap;
     font-style: italic;
