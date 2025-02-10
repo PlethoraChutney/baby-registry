@@ -7,4 +7,4 @@ which will be in my website.
 
 Thanks! Excited to have a kid! See ya.
 
-![A dancing baby GIF](/public/images/dancing-baby.gif)
+![A dancing baby GIF](public/images/dancing-baby.gif)
