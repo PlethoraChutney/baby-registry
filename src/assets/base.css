@@ -4,7 +4,10 @@
 /* semantic color variables for this project */
 :root {
   --color-bg: var(--flexoki-light-bg);
+  --color-bg-2: var(--flexoki-light-bg-2);
   --color-txt: var(--flexoki-light-tx);
+
+  --color-ui: var(--flexoki-light-ui);
 
   --yellow: var(--flexoki-yellow-600);
   --yellow-2: var(--flexoki-yellow-400);
@@ -16,7 +19,10 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-bg: var(--flexoki-dark-bg);
+    --color-bg-2: var(--flexoki-dark-bg-2);
     --color-txt: var(--flexoki-dark-tx);
+
+    --color-ui: var(--flexoki-dark-ui)
 
     --yellow: var(--flexoki-yellow-400);
     --yellow-2: var(--flexoki-yellow-600);
@@ -42,7 +48,7 @@
 
 }
 
-body {
+html, body {
   font-family: var(--base-font-family);
   font-size: var(--base-font-size);
   font-weight: var(--base-font-weight);
@@ -80,6 +86,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 a {

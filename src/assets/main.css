@@ -1,6 +1,10 @@
 @import "./fonts.css";
 @import "./base.css";
 
+:root {
+  --card-width: 20em;
+}
+
 #app {
   margin: 0;
   padding: 0;
@@ -15,4 +19,9 @@ main {
   padding: 0.5em;
   gap: 0.25em;
   display: grid;
+}
+
+#app,
+main {
+  scrollbar-gutter: stable;
 }
