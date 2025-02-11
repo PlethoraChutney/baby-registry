@@ -6,6 +6,7 @@
   --color-bg: var(--flexoki-light-bg);
   --color-bg-2: var(--flexoki-light-bg-2);
   --color-txt: var(--flexoki-light-tx);
+  --color-txt-2: var(--flexoki-light-tx-2);
 
   --color-ui: var(--flexoki-light-ui);
 
@@ -21,8 +22,9 @@
     --color-bg: var(--flexoki-dark-bg);
     --color-bg-2: var(--flexoki-dark-bg-2);
     --color-txt: var(--flexoki-dark-tx);
+    --color-txt-2: var(--flexoki-dark-tx-2);
 
-    --color-ui: var(--flexoki-dark-ui)
+    --color-ui: var(--flexoki-dark-ui);
 
     --yellow: var(--flexoki-yellow-400);
     --yellow-2: var(--flexoki-yellow-600);

@@ -19,7 +19,7 @@
 @font-face {
     font-family: 'Supreme';
     src:
-        local("Supreme Variable"),
+        local("Supreme Variable Italic"),
         url('/fonts/Supreme-VariableItalic.woff2') format('woff2');
     font-weight: 100 800;
     font-display: swap;

@@ -2,7 +2,7 @@
 @import "./base.css";
 
 :root {
-  --card-width: 20em;
+  --card-width: 20rem;
 }
 
 #app {
@@ -16,12 +16,17 @@
 main {
   width: 100%;
   height: 100%;
-  padding: 0.5em;
-  gap: 0.25em;
+  padding: 0.5rem;
+  gap: 0.25rem;
   display: grid;
 }
 
 #app,
 main {
   scrollbar-gutter: stable;
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
 }

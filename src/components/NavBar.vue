@@ -13,7 +13,7 @@ import { RouterLink } from 'vue-router'
 <style scoped>
 
 nav {
-    font-size: var(--h2-size);
+    font-size: var(--h3-size);
     font-weight: var(--h2-weight);
     display: flex;
     gap: 1em;

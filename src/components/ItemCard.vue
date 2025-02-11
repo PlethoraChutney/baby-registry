@@ -11,10 +11,21 @@ const props = defineProps({
 <div class="card">
     <div class="img-container">
         <h3>{{ props.item.label }}</h3>
-        <img :src="`/images/item-images/${ props.uuid }.png`" alt="">
+        <a
+        :href="item.link"
+        target="_blank"
+        rel="noopener noreferrer"
+        >
+            <img :src="`/images/item-images/${ props.uuid }.png`" alt="">
+            <p>Click here to get it new!</p>
+        </a>
     </div>
     <p class="description">{{ props.item.description }}</p>
-    <button>
+    <details>
+        <summary class="no-select">Info for getting it used</summary>
+        <p>{{ item.specs }}</p>
+    </details>
+    <button class="no-select">
         I got it!
     </button>
 </div>
@@ -25,14 +36,23 @@ const props = defineProps({
     width: var(--card-width);
     height: calc(var(--card-width) * 1.618);
 
-    border: 6px solid var(--color-ui);
+    font-size: 0.9rem;
+
+    border: 6px solid var(--color-txt-2);
     padding: 1em;
 
     display: grid;
-    grid-template-rows: max-content 1fr;
+    grid-template-rows: max-content 1fr 1.5lh 1.5lh;
     grid-template-columns: 1fr;
+    gap: 0.5rem;
 
-    box-shadow: 5px 10px 20px 1px var(--color-ui);
+    box-shadow: 5px 10px 20px 2px color-mix(in srgb, var(--color-txt-2) 75%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+    .card {
+        box-shadow: unset;
+    }
 }
 
 .purchased {
@@ -43,17 +63,56 @@ const props = defineProps({
 .img-container {
     position: relative;
 }
-.img-container :is(h2, h3) {
-    position: absolute;
-    margin: 0;
-    padding: 0.125em 0.25em;
-    width: 100%;
-    background-color: color-mix(in srgb, var(--color-bg) 50%, transparent);
-    backdrop-filter: blur(3px);
-}
+
 .img-container img {
     width: 100%;
     aspect-ratio: 1;
+}
+.img-container a h3 {
+    color: var(--color-txt);
+    text-decoration: none;
+}
+
+.img-container h3 {
+}
+.img-container a p {
+    bottom: 0;
+}
+.img-container :is(h3, p) {
+    position: absolute;
+    margin: 0;
+    width: 100%;
+    padding: 0.125em 0.25em;
+    background-color: color-mix(in srgb, var(--color-bg) 75%, transparent);
+    backdrop-filter: blur(4px);
+}
+
+.description {
+    font-style: italic;
+}
+
+details {
+    position: relative;
+    height: 100%;
+    top: 0;
+    z-index: 2;
+}
+details p {
+    background-color: var(--color-bg);
+    padding: 0.5em 1em 1em 1em;
+    border: 1px solid var(--color-txt-2);
+    border-color: var(--color-ui) var(--color-txt-2) var(--color-txt-2) var(--color-txt-2);
+}
+summary {
+    cursor: pointer;
+    border: 1px solid var(--color-txt-2);
+    height: 100%;
+    width: 100%;
+    padding: 0.25lh;
+}
+
+details[open] summary {
+    border-width: 1px 1px 0 1px;
 }
 
 button {
