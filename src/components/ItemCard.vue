@@ -1,8 +1,54 @@
 <script setup>
+import { computed } from 'vue';
 
 const props = defineProps({
     "uuid": {type: String, required: true},
-    "item": {type: Object, required: true}
+    "item": {type: Object, required: true},
+    "purchased": {type: Number, required: true}
+})
+
+const needMore = computed(() => {
+    if (String(Number(props.item.quantity)) !== props.item.quantity) {
+        return props.item.quantity;
+    }
+    return `${props.item.quantity - props.purchased} more`;
+});
+
+const numberGuess = computed(() => {
+    if (props.item.quantity === "?") {
+        return null
+    }
+    if (String(Number(props.item.quantity)) === props.item.quantity) {
+        return Number(props.item.quantity)
+    }
+    const firstPart = props.item.quantity.split(" ")[0];
+    if (String(Number(firstPart)) === firstPart) {
+        return Number(firstPart)
+    }
+    return null
+})
+
+const gotWhat = computed(() => {
+    if (numberGuess.value === 1) {
+        return "it"
+    } else {
+        return "one"
+    }
+})
+
+const percentPurchased = computed(() => {
+    let propPurchased;
+    if (numberGuess.value === null) {
+        propPurchased = 0;
+    } else {
+        propPurchased = props.purchased / numberGuess.value;
+    }
+
+    return propPurchased * 100;
+})
+
+const buttonBackground = computed(() => {
+    return `linear-gradient(to right, var(--yellow) ${percentPurchased.value}%, var(--blue) ${percentPurchased.value}%)`
 })
 
 </script>
@@ -17,22 +63,28 @@ const props = defineProps({
         rel="noopener noreferrer"
         >
             <img :src="`/images/item-images/${ props.uuid }.png`" alt="">
-            <p>Click here to get it new!</p>
+            <p>Here it is new!</p>
         </a>
     </div>
+
     <p class="description">{{ props.item.description }}</p>
-    <details>
+
+    <details v-if="item.specs">
         <summary class="no-select">Info for getting it used</summary>
         <p>{{ item.specs }}</p>
     </details>
-    <button class="no-select">
-        I got it!
+    <div v-else></div>
+
+    <button class="no-select" :style="{background: buttonBackground}">
+        Need {{ needMore }}. Click if you got {{ gotWhat }}!
     </button>
 </div>
 </template>
 
 <style scoped>
 .card {
+    --color-blur-bg: color-mix(in srgb, var(--color-bg) 15%, transparent);
+
     width: var(--card-width);
     height: calc(var(--card-width) * 1.618);
 
@@ -73,8 +125,6 @@ const props = defineProps({
     text-decoration: none;
 }
 
-.img-container h3 {
-}
 .img-container a p {
     bottom: 0;
 }
@@ -83,8 +133,8 @@ const props = defineProps({
     margin: 0;
     width: 100%;
     padding: 0.125em 0.25em;
-    background-color: color-mix(in srgb, var(--color-bg) 75%, transparent);
-    backdrop-filter: blur(4px);
+    background-color: var(--color-blur-bg);
+    backdrop-filter: blur(6px);
 }
 
 .description {
@@ -99,7 +149,7 @@ details {
 }
 details p {
     background-color: var(--color-bg);
-    padding: 0.5em 1em 1em 1em;
+    padding: 0.5em 1em;
     border: 1px solid var(--color-txt-2);
     border-color: var(--color-ui) var(--color-txt-2) var(--color-txt-2) var(--color-txt-2);
 }
@@ -117,13 +167,12 @@ details[open] summary {
 
 button {
     border: none;
-    background-color: var(--blue);
     color: var(--color-bg);
     font-family: inherit;
     font-size: inherit;
-    padding: 0.25em 0;
     cursor: pointer;
     width: 100%;
+    position: relative;
 }
 button:hover {
     background-color: var(--blue-2);
