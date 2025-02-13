@@ -2,13 +2,18 @@
 import NavBar from "../components/NavBar.vue";
 import ItemCard from "@/components/ItemCard.vue";
 import items from "@/assets/items-info.json";
-import { computed } from "vue";
+import { ref } from "vue";
 
+const purchasedItems = ref({});
 function purchased(uuid) {
-    if (uuid === "db995f16-057e-4b9d-8520-afdcc6e79077") {
-        return 4
+    const quant = purchasedItems[uuid];
+    return quant ?? 0;
+}
+function boughtItem(uuid) {
+    if (purchasedItems.value[uuid]) {
+        purchasedItems.value[uuid] += 1;
     } else {
-        return 0
+        purchasedItems.value[uuid] = 1;
     }
 }
 </script>

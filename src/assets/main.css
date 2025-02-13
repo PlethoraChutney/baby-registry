@@ -30,3 +30,28 @@ main {
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* inputs */
+button {
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  align-content: center;
+}
+button svg {
+  height: 100%;
+}
+
+input {
+  color: var(--color-txt);
+  font-size: inherit;
+  font-family: inherit;
+  background-color: var(--color-ui);
+  border: 2px solid var(--color-ui-2);
+  padding: 0 0.5em;
+  min-width: unset;
+}
+input:focus {
+  outline: 2px solid var(--blue);
+}

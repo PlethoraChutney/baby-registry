@@ -1,5 +1,7 @@
 <script setup>
+import { ref } from 'vue';
 import { computed } from 'vue';
+import { PhCheck, PhX } from "@phosphor-icons/vue";
 
 const props = defineProps({
     "uuid": {type: String, required: true},
@@ -7,18 +9,25 @@ const props = defineProps({
     "purchased": {type: Number, required: true}
 })
 
-const needMore = computed(() => {
-    if (String(Number(props.item.quantity)) !== props.item.quantity) {
+const emit = defineEmits(["bought"]);
+const nonstandardQuantity = String(Number(props.item.quantity)) !== String(props.item.quantity);
+
+// figure out how many we want and how many we have
+
+const purchased = ref(props.purchased);
+
+const wantMoreString = computed(() => {
+    if (nonstandardQuantity) {
         return props.item.quantity;
     }
-    return `${props.item.quantity - props.purchased} more`;
+    return `${wantedRemainingNumber.value} more`;
 });
 
-const numberGuess = computed(() => {
+const wantedTotalNumber = computed(() => {
     if (props.item.quantity === "?") {
         return null
     }
-    if (String(Number(props.item.quantity)) === props.item.quantity) {
+    if (!nonstandardQuantity) {
         return Number(props.item.quantity)
     }
     const firstPart = props.item.quantity.split(" ")[0];
@@ -28,20 +37,28 @@ const numberGuess = computed(() => {
     return null
 })
 
-const gotWhat = computed(() => {
-    if (numberGuess.value === 1) {
+const wantedRemainingNumber = computed(() => {
+    if (wantedTotalNumber.value === null) {
+        return null;
+    }
+    return wantedTotalNumber.value - purchased.value;
+})
+
+const wantMoreSuffix = computed(() => {
+    if (!nonstandardQuantity && wantedRemainingNumber.value === 1) {
         return "it"
     } else {
         return "one"
     }
 })
 
+// button fill in
 const percentPurchased = computed(() => {
     let propPurchased;
-    if (numberGuess.value === null) {
+    if (wantedTotalNumber.value === null) {
         propPurchased = 0;
     } else {
-        propPurchased = props.purchased / numberGuess.value;
+        propPurchased = purchased.value / wantedTotalNumber.value;
     }
 
     return propPurchased * 100;
@@ -51,12 +68,69 @@ const buttonBackground = computed(() => {
     return `linear-gradient(to right, var(--yellow) ${percentPurchased.value}%, var(--blue) ${percentPurchased.value}%)`
 })
 
+const itemsPurchased = computed(() => {
+    return purchased.value === wantedTotalNumber.value
+})
+
+// purchase single
+const purchasingSingle = ref(false);
+function purchaseButtonClick() {
+    if (!wantedTotalNumber.value) {
+        return
+    }
+
+    if (wantedRemainingNumber.value === 1) {
+        purchasingSingle.value = true;
+    } else {
+        purchaseMultiple();
+    }
+}
+
+function completeSinglePurchase() {
+    purchased.value += 1;
+    emit("bought");
+    purchasingSingle.value = false;
+}
+function abortSinglePurchase() {
+    purchasingSingle.value = false
+}
+
+// purchase multiple
+const purchasingMultiple = ref(false);
+const purchaseAmount = ref("1");
+
+function purchaseMultiple() {
+    purchaseAmount.value = 1;
+    purchasingMultiple.value = true;
+}
+
+function validatePurchaseAmount() {
+    if (String(Number(purchaseAmount.value)) != purchaseAmount.value || purchaseAmount.value < 1) {
+        purchaseAmount.value = "1";
+    }
+
+    if (purchaseAmount.value > wantedRemainingNumber.value) {
+        purchaseAmount.value = wantedRemainingNumber.value;
+    }
+    
+}
+
+function completeMultiPurchase() {
+    purchased.value += purchaseAmount.value;
+    emit("bought");
+    purchasingMultiple.value = false;
+}
+function abortMultiPurchase() {
+    purchasingMultiple.value = false;
+}
+
 </script>
 
 <template>
-<div class="card">
+<div class="card" :class="{'purchased': itemsPurchased}">
     <div class="img-container">
         <h3>{{ props.item.label }}</h3>
+
         <a
         :href="item.link"
         target="_blank"
@@ -69,21 +143,50 @@ const buttonBackground = computed(() => {
 
     <p class="description">{{ props.item.description }}</p>
 
-    <details v-if="item.specs">
+    <details v-if="item.specs && !itemsPurchased">
         <summary class="no-select">Info for getting it used</summary>
         <p>{{ item.specs }}</p>
     </details>
     <div v-else></div>
 
-    <button class="no-select" :style="{background: buttonBackground}">
-        Need {{ needMore }}. Click if you got {{ gotWhat }}!
+    <button
+    class="no-select"
+    :style="{background: buttonBackground}"
+    @click="purchaseButtonClick"
+    v-show="!itemsPurchased && !purchasingMultiple && !purchasingSingle"
+    >
+        We'd love {{ wantMoreString }}. Click if you got {{ wantMoreSuffix }}!
     </button>
+    <div
+    v-if="!itemsPurchased && purchasingSingle"
+    class="purchase-buttons single"
+    >
+        <button @click="completeSinglePurchase" class="green hover">Confirm!</button>
+        <button @click="abortSinglePurchase" class="red hover">Oops! Misclick!</button>
+    </div>
+    <div
+    v-if="!itemsPurchased && purchasingMultiple"
+    class="purchase-buttons multiple"
+    >
+        <input
+        type="number"
+        v-model="purchaseAmount"
+        min="1"
+        :max="wantedRemainingNumber ?? 5"
+        @change="validatePurchaseAmount"
+        >
+        <button @click="completeMultiPurchase" class="green hover"><PhCheck/></button>
+        <button @click="abortMultiPurchase" class="red hover"><PhX/></button>
+    </div>
+    <p v-if="itemsPurchased" class="button-replacement">
+        That's plenty! Thank you so much!
+    </p>
 </div>
 </template>
 
 <style scoped>
 .card {
-    --color-blur-bg: color-mix(in srgb, var(--color-bg) 15%, transparent);
+    --color-blur-bg: color-mix(in srgb, var(--color-bg) 50%, transparent);
 
     width: var(--card-width);
     height: calc(var(--card-width) * 1.618);
@@ -99,6 +202,8 @@ const buttonBackground = computed(() => {
     gap: 0.5rem;
 
     box-shadow: 5px 10px 20px 2px color-mix(in srgb, var(--color-txt-2) 75%, transparent);
+
+    transition: opacity 500ms ease-out;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -109,7 +214,9 @@ const buttonBackground = computed(() => {
 
 .purchased {
     filter: saturate(0);
-    opacity: 0.6;
+    opacity: 0.3;
+
+    transition: opacity 500ms ease-out;
 }
 
 .img-container {
@@ -120,7 +227,7 @@ const buttonBackground = computed(() => {
     width: 100%;
     aspect-ratio: 1;
 }
-.img-container a h3 {
+.img-container h3 {
     color: var(--color-txt);
     text-decoration: none;
 }
@@ -134,7 +241,7 @@ const buttonBackground = computed(() => {
     width: 100%;
     padding: 0.125em 0.25em;
     background-color: var(--color-blur-bg);
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(2px);
 }
 
 .description {
@@ -165,12 +272,17 @@ details[open] summary {
     border-width: 1px 1px 0 1px;
 }
 
+.button-replacement {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    align-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 button {
-    border: none;
     color: var(--color-bg);
-    font-family: inherit;
-    font-size: inherit;
-    cursor: pointer;
     width: 100%;
     position: relative;
 }
@@ -180,5 +292,25 @@ button:hover {
 button:active {
     transform-origin: center;
     transform: scale(0.95);
+}
+button p {
+    pointer-events: none;
+}
+
+.purchase-buttons {
+    width: 100%;
+    display: flex;
+    gap: 0.125em;
+}
+input {
+    flex-grow: 1;
+    margin: 0 0.5em;
+}
+.purchase-buttons.multiple button {
+    width: max-content;
+    aspect-ratio: 1;
+}
+.purchase-buttons.single button {
+    flex-grow: 1;
 }
 </style>
