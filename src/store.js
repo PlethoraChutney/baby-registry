@@ -20,5 +20,13 @@ export const store = reactive({
         this.imageUrl = "";
     },
 
-    buyingAcknowledged: false
+    buyingAcknowledged: false,
+
+    items: {},
+    async updateItems() {
+        return fetch("/api/items")
+        .then(response => response.json())
+        .then(items => this.items = items)
+        .catch(err => console.error(err))
+    }
 })

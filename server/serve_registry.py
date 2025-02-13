@@ -34,9 +34,13 @@ class Database:
         for uuid, item_info in registry_info.items():
             quantity = get_quantity_guess(item_info["quantity"])
             if uuid in self.db["items"]:
+                # always update in case we change the desired quantity
                 self.db["items"][uuid]["numeric_quant"] = quantity
             else:
-                item_info["numeric_quant"] = quantity
+                item_info.update({
+                    "numeric_quant": quantity,
+                    "purchased": 0
+                })
                 self.db["items"][uuid] = item_info
 
 
@@ -67,10 +71,11 @@ class Database:
             num_purchased = int(num_purchased)
             if num_purchased < 1:
                 raise ValueError
+
             old_info = self.db["items"][uuid]
             if (
                 old_info["quantity"] is not None
-                and old_info["purchased"] + num_purchased > old_info["quantity"]
+                and old_info["purchased"] + num_purchased > old_info["numeric_quant"]
             ):
                 raise ValueError
             old_info["purchased"] += num_purchased
@@ -111,7 +116,7 @@ def purchase_item():
     
     if result[0]:
         return make_response(
-            json.dumps(result[1]),
+            {"new_purchased": result[1]},
             200
         )
     else:

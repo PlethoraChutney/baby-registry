@@ -2,19 +2,38 @@
 import { ref } from 'vue';
 import { computed } from 'vue';
 import { PhCheck, PhX } from "@phosphor-icons/vue";
+import { store } from '@/store';
 
 const props = defineProps({
     "uuid": {type: String, required: true},
     "item": {type: Object, required: true},
-    "purchased": {type: Number, required: true}
 })
 
 const emit = defineEmits(["bought"]);
 const nonstandardQuantity = String(Number(props.item.quantity)) !== String(props.item.quantity);
 
-// figure out how many we want and how many we have
+async function purchaseItems(uuid, quant) {
+    const body = JSON.stringify({"uuid": uuid, "num_purchased": quant})
+    return fetch(
+        "/api/purchase_item",
+        {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": body
+        }
+    )
+    .then(response => response.json())
+    .then(data => {
+        if (data["new_purchased"]) {
+            store.items[props.uuid].purchased = data["new_purchased"]
+        }
+        purchasedChanged.value = false;
+    })
+}
 
-const purchased = ref(props.purchased);
+// figure out how many we want and how many we have
 
 const wantMoreString = computed(() => {
     if (nonstandardQuantity) {
@@ -23,25 +42,11 @@ const wantMoreString = computed(() => {
     return `${wantedRemainingNumber.value} more`;
 });
 
-const wantedTotalNumber = computed(() => {
-    if (props.item.quantity === "?") {
-        return null
-    }
-    if (!nonstandardQuantity) {
-        return Number(props.item.quantity)
-    }
-    const firstPart = props.item.quantity.split(" ")[0];
-    if (String(Number(firstPart)) === firstPart) {
-        return Number(firstPart)
-    }
-    return null
-})
-
 const wantedRemainingNumber = computed(() => {
-    if (wantedTotalNumber.value === null) {
+    if (props.item.numeric_quant === null) {
         return null;
     }
-    return wantedTotalNumber.value - purchased.value;
+    return props.item.numeric_quant - props.item.purchased;
 })
 
 const wantMoreSuffix = computed(() => {
@@ -55,10 +60,10 @@ const wantMoreSuffix = computed(() => {
 // button fill in
 const percentPurchased = computed(() => {
     let propPurchased;
-    if (wantedTotalNumber.value === null) {
+    if (props.item.numeric_quant === null) {
         propPurchased = 0;
     } else {
-        propPurchased = purchased.value / wantedTotalNumber.value;
+        propPurchased = props.item.purchased / props.item.numeric_quant;
     }
 
     return propPurchased * 100;
@@ -69,30 +74,41 @@ const buttonBackground = computed(() => {
 })
 
 const itemsPurchased = computed(() => {
-    return purchased.value === wantedTotalNumber.value
+    return props.item.purchased === props.item.numeric_quant
 })
 
 // purchase single
 const purchasingSingle = ref(false);
-function purchaseButtonClick() {
-    if (!wantedTotalNumber.value) {
-        return
-    }
+async function purchaseButtonClick() {
+    const oldValue = props.item.purchased;
+    store.updateItems()
+    .then(response => {
+        if (props.item.purchased !== oldValue) {
+            purchasedChanged.value = true;
+            if (wantedRemainingNumber.value === 0) {
+                return
+            }
+        }
+        if (!props.item.numeric_quant && props.wantedRemainingNumber > 0) {
+            return
+        }
 
-    if (wantedRemainingNumber.value === 1) {
-        purchasingSingle.value = true;
-    } else {
-        purchaseMultiple();
-    }
+        if (wantedRemainingNumber.value === 1) {
+            purchasingSingle.value = true;
+        } else {
+            purchaseMultiple();
+        }
+    })
 }
 
 function completeSinglePurchase() {
-    purchased.value += 1;
+    purchaseItems(props.uuid, 1)
     emit("bought");
     purchasingSingle.value = false;
 }
 function abortSinglePurchase() {
-    purchasingSingle.value = false
+    purchasingSingle.value = false;
+    purchasedChanged.value = false;
 }
 
 // purchase multiple
@@ -116,13 +132,19 @@ function validatePurchaseAmount() {
 }
 
 function completeMultiPurchase() {
-    purchased.value += purchaseAmount.value;
+    purchaseItems(props.uuid, purchaseAmount.value)
     emit("bought");
     purchasingMultiple.value = false;
 }
 function abortMultiPurchase() {
     purchasingMultiple.value = false;
+    purchasedChanged.value = false;
 }
+
+// handle if someone purchased items while a user
+// is looking at the site
+
+const purchasedChanged = ref(false);
 
 </script>
 
@@ -141,7 +163,11 @@ function abortMultiPurchase() {
         </a>
     </div>
 
-    <p class="description">{{ props.item.description }}</p>
+    <p class="description" v-if="!purchasedChanged">{{ props.item.description }}</p>
+    <p class="description" v-else>
+        Someone bought one (or more) while you were browsing!
+        {{ wantedRemainingNumber ? `Now we only need ${wantedRemainingNumber}` : 'Now we have all we need, so you shouldn\'t buy any!' }}
+    </p>
 
     <details v-if="item.specs && !itemsPurchased">
         <summary class="no-select">Info for getting it used</summary>

@@ -1,22 +1,17 @@
 <script setup>
 import NavBar from "../components/NavBar.vue";
 import ItemCard from "@/components/ItemCard.vue";
-import items from "@/assets/items-info.json";
 import { ref, useTemplateRef } from "vue";
 import { onMounted } from "vue";
 import { store } from "@/store";
+import { onBeforeMount } from "vue";
+
+onBeforeMount(() => store.updateItems());
 
 const purchasedItems = ref({});
 function purchased(uuid) {
-    const quant = purchasedItems[uuid];
+    const quant = store.items[uuid].purchased;
     return quant ?? 0;
-}
-function boughtItem(uuid) {
-    if (purchasedItems.value[uuid]) {
-        purchasedItems.value[uuid] += 1;
-    } else {
-        purchasedItems.value[uuid] = 1;
-    }
 }
 
 // don't buy stuff dialog
@@ -69,11 +64,10 @@ onMounted(() => {
     <div class="content">
         <div class="card-container">
             <ItemCard
-            v-for="item, uuid of items"
+            v-for="item, uuid of store.items"
             :key="uuid"
             :uuid
             :item
-            :purchased="purchased(uuid)"
             />
         </div>
     </div>
