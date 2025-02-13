@@ -33,3 +33,4 @@ public/fonts/
 registry-info.csv
 public/images/item-images/*
 src/assets/items-info.json
+__pycache__/
