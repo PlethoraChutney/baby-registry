@@ -38,9 +38,18 @@ button {
   font-size: inherit;
   cursor: pointer;
   align-content: center;
+  color: var(--color-bg);
+  background-color: var(--blue);
 }
 button svg {
   height: 100%;
+}
+button:hover {
+    background-color: var(--blue-2);
+}
+button:active {
+    transform-origin: center;
+    transform: scale(0.95);
 }
 
 input {
@@ -54,4 +63,33 @@ input {
 }
 input:focus {
   outline: 2px solid var(--blue);
+}
+
+.button-holder {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  margin-top: 1lh;
+}
+.button-holder button {
+  width: 100%;
+  min-height: 2lh;
+}
+
+/* dialogs */
+
+dialog {
+  color: var(--color-txt);
+  background-color: var(--color-bg);
+  margin: auto;
+  max-width: 50em;
+  border: 6px solid var(--color-txt-2);
+}
+
+dialog::backdrop {
+  backdrop-filter: blur(15px);
+}
+
+dialog > p + p {
+  margin-top: 0.5lh;
 }

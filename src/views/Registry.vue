@@ -2,7 +2,9 @@
 import NavBar from "../components/NavBar.vue";
 import ItemCard from "@/components/ItemCard.vue";
 import items from "@/assets/items-info.json";
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
+import { onMounted } from "vue";
+import { store } from "@/store";
 
 const purchasedItems = ref({});
 function purchased(uuid) {
@@ -16,9 +18,41 @@ function boughtItem(uuid) {
         purchasedItems.value[uuid] = 1;
     }
 }
+
+// don't buy stuff dialog
+const dontBuyStuff = useTemplateRef("dont-buy-stuff");
+onMounted(() => {
+    if (!store.buyingAcknowledged) {
+        dontBuyStuff.value.showModal();
+    }
+})
 </script>
 
 <template>
+<dialog ref="dont-buy-stuff">
+    <h1>Stop!</h1>
+    <p>
+        Buying gifts is <em>optional</em>. We invited you to our baby shower
+        because we want you to come have a good time,
+        <em>not</em> because we want things. We made a registry
+        in case you <em>want</em> to buy stuff!
+    </p>
+    <p>
+        By proceeding to look at the registry, you acknowledge that
+        gifts are optional, and that if you've already given us baby
+        stuff that counts as a gift.
+    </p>
+    <div class="button-holder">
+        <button @click="() => {dontBuyStuff.close(); store.buyingAcknowledged = true;}">
+            OK, you freaks!
+        </button>
+        <a href="https://www.google.com/search?&q=cute+cats&udm=2">
+            <button>
+                No, I kinda feel like I have to get you stuff.
+            </button>
+        </a>
+    </div>
+</dialog>
 <main>
 
     <NavBar/>
@@ -88,4 +122,7 @@ nav {
     justify-content: center;
 }
 
+.button-holder a {
+    width: 100%;
+}
 </style>

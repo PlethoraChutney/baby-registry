@@ -18,5 +18,7 @@ export const store = reactive({
     hideImage() {
         this.imageShow = false;
         this.imageUrl = "";
-    }
+    },
+
+    buyingAcknowledged: false
 })

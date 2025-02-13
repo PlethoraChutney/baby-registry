@@ -111,7 +111,7 @@ a {
 
 em {
   font-style: inherit;
-  font-weight: var(--h3-weight);
+  font-weight: 800;
 }
 
 .red {

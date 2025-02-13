@@ -286,13 +286,6 @@ button {
     width: 100%;
     position: relative;
 }
-button:hover {
-    background-color: var(--blue-2);
-}
-button:active {
-    transform-origin: center;
-    transform: scale(0.95);
-}
 button p {
     pointer-events: none;
 }
