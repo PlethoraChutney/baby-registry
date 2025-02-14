@@ -81,7 +81,7 @@ const itemsPurchased = computed(() => {
 const purchasingSingle = ref(false);
 async function purchaseButtonClick() {
     const oldValue = props.item.purchased;
-    store.updateItems()
+    store.updatePurchased()
     .then(response => {
         if (props.item.purchased !== oldValue) {
             purchasedChanged.value = true;
@@ -166,7 +166,7 @@ const purchasedChanged = ref(false);
     <p class="description" v-if="!purchasedChanged">{{ props.item.description }}</p>
     <p class="description" v-else>
         Someone bought one (or more) while you were browsing!
-        {{ wantedRemainingNumber ? `Now we only need ${wantedRemainingNumber}` : 'Now we have all we need, so you shouldn\'t buy any!' }}
+        {{ wantedRemainingNumber ? `Now we only want ${wantedRemainingNumber} more.` : 'Now we have all we need, so you shouldn\'t buy any!' }}
     </p>
 
     <details v-if="item.specs && !itemsPurchased">

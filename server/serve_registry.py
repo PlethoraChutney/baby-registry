@@ -58,13 +58,16 @@ class Database:
     
     @property
     def purchased(self):
-        return {
-            uuid: item["purchased"] for uuid, item in self.db["items"].items()
-        }
+        return [
+            (uuid, item["purchased"]) for uuid, item in self.db["items"].items()
+        ]
     
     @property
     def items(self):
-        return self.db["items"]
+        return dict(sorted(
+            self.db["items"].items(),
+            key = lambda i: i[1]["numeric_quant"] is not None and i[1]["purchased"] == i[1]["numeric_quant"]
+        ))
     
     def purchase_item(self, uuid:str, num_purchased:int):
         try:
@@ -91,15 +94,16 @@ class Database:
 db = Database()
 
 app = Flask(__name__)
+app.json.sort_keys = False
 
-@app.route("/api/items", methods = ["GET"])
+@app.route("/api/items/", methods = ["GET"])
 def get_items():
     return make_response(
         db.items,
         200
     )
 
-@app.route("/api/get_purchase_status", methods = ["GET"])
+@app.route("/api/purchased/", methods = ["GET"])
 def get_purchase_status():
     return make_response(
         db.purchased,

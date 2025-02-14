@@ -24,9 +24,17 @@ export const store = reactive({
 
     items: {},
     async updateItems() {
-        return fetch("/api/items")
+        return fetch("/api/items/")
         .then(response => response.json())
-        .then(items => this.items = items)
+        .then(items => {
+            console.log(items);
+            this.items = items;
+        })
         .catch(err => console.error(err))
+    },
+    async updatePurchased() {
+        return fetch("/api/purchased/")
+        .then(response => response.json())
+        .then(items => items.forEach(e => this.items[e[0]].purchased = e[1]))
     }
 })
