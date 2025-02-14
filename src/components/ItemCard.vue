@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import { PhCheck, PhX } from "@phosphor-icons/vue";
 import { store } from '@/store';
+import { nextTick } from 'vue';
 
 const props = defineProps({
     "uuid": {type: String, required: true},
@@ -122,10 +123,14 @@ function abortSinglePurchase() {
 // purchase multiple
 const purchasingMultiple = ref(false);
 const purchaseAmount = ref("1");
+const purchaseAmountInput = useTemplateRef("purchase-amount-input")
 
 function purchaseMultiple() {
     purchaseAmount.value = 1;
     purchasingMultiple.value = true;
+    nextTick(() => {
+        purchaseAmountInput.value.select();
+    })
 }
 
 function validatePurchaseAmount() {
@@ -198,9 +203,12 @@ function abortMultiPurchase() {
         <input
         type="number"
         v-model="purchaseAmount"
+        ref="purchase-amount-input"
         min="1"
         :max="wantedRemainingNumber ?? 5"
         @change="validatePurchaseAmount"
+        @keyup.enter="completeMultiPurchase"
+        @keyup.esc="abortMultiPurchase"
         >
         <button @click="completeMultiPurchase" class="green hover"><PhCheck/></button>
         <button @click="abortMultiPurchase" class="red hover"><PhX/></button>
