@@ -1,6 +1,7 @@
 <script setup>
 import NavBar from "../components/NavBar.vue";
 import { useMouseImage } from "../composables/mouseImage.js"
+import { store } from "@/store";
 
 const { x, y } = useMouseImage("/images/dancing-baby.gif");
 </script>
@@ -9,7 +10,7 @@ const { x, y } = useMouseImage("/images/dancing-baby.gif");
   <main>
     <NavBar/>
     <div class="content">
-      <h1 class="title">It's freakin' baby time!!!</h1>
+      <h1 class="title" @click="store.notify('Test', 'Test body content, let us put a bit more this time. Lots and lots of content.', 3000)">It's freakin' baby time!!!</h1>
       <p>Seriously! It's time to have a baby!</p>
     </div>
   </main>
@@ -37,5 +38,7 @@ nav {
 
 .title {
   font-size: 4rem;
+  user-select: none;
+  -webkit-user-select: none;
 }
 </style>

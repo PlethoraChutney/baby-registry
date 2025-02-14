@@ -29,7 +29,6 @@ async function purchaseItems(uuid, quant) {
         if (data["new_purchased"]) {
             store.items[props.uuid].purchased = data["new_purchased"]
         }
-        purchasedChanged.value = false;
     })
 }
 
@@ -84,9 +83,19 @@ async function purchaseButtonClick() {
     store.updatePurchased()
     .then(response => {
         if (props.item.purchased !== oldValue) {
-            purchasedChanged.value = true;
             if (wantedRemainingNumber.value === 0) {
+                store.notify(
+                    "Someone bought this!",
+                    "While you were looking, someone bought all of this item that we want! Thank you though!",
+                    5000
+                )
                 return
+            } else {
+                store.notify(
+                    "Someone bought some of these!",
+                    `While you were looking, someone bought a few of this item. We now only want ${wantedRemainingNumber.value} more! Thank you!`,
+                    5000
+                )
             }
         }
         if (!props.item.numeric_quant && props.wantedRemainingNumber > 0) {
@@ -108,7 +117,6 @@ function completeSinglePurchase() {
 }
 function abortSinglePurchase() {
     purchasingSingle.value = false;
-    purchasedChanged.value = false;
 }
 
 // purchase multiple
@@ -138,13 +146,10 @@ function completeMultiPurchase() {
 }
 function abortMultiPurchase() {
     purchasingMultiple.value = false;
-    purchasedChanged.value = false;
 }
 
 // handle if someone purchased items while a user
 // is looking at the site
-
-const purchasedChanged = ref(false);
 
 </script>
 
@@ -163,11 +168,7 @@ const purchasedChanged = ref(false);
         </a>
     </div>
 
-    <p class="description" v-if="!purchasedChanged">{{ props.item.description }}</p>
-    <p class="description" v-else>
-        Someone bought one (or more) while you were browsing!
-        {{ wantedRemainingNumber ? `Now we only want ${wantedRemainingNumber} more.` : 'Now we have all we need, so you shouldn\'t buy any!' }}
-    </p>
+    <p class="description">{{ props.item.description }}</p>
 
     <details v-if="item.specs && !itemsPurchased">
         <summary class="no-select">Info for getting it used</summary>

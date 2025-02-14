@@ -36,5 +36,22 @@ export const store = reactive({
         return fetch("/api/purchased/")
         .then(response => response.json())
         .then(items => items.forEach(e => this.items[e[0]].purchased = e[1]))
+    },
+
+    notificationTitle: "",
+    notificationBody: "",
+    showNotification: false,
+    notify(title, body, duration = 2000) {
+        this.notificationTitle = title;
+        this.notificationBody = body;
+        this.showNotification = true;
+        setTimeout(() => store.hideNotification(), duration)
+    },
+    hideNotification() {
+        this.showNotification = false;
+        setTimeout(() => {
+            this.notificationTitle = "";
+            this.notificationBody = "";
+        }, 500)
     }
 })
