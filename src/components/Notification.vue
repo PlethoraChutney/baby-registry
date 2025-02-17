@@ -24,6 +24,7 @@ import { store } from '@/store';
     border: 6px solid var(--color-ui);
     transform: translate(22rem, 0px);
     transition: transform 200ms linear;
+    z-index: 3;
 }
 
 .show {

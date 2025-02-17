@@ -4,7 +4,6 @@ import json
 import os
 import sys
 from pathlib import Path
-from collections import defaultdict
 
 try:
     REG_KEY=os.environ["WALDO_REG_KEY"]
@@ -126,7 +125,18 @@ class Database:
 
     def create_user(self, user_id):
         if user_id not in self.users:
-            self.users[user_id] = {"purchsed": defaultdict(lambda: 0)}
+            self.users[user_id] = {"purchased": {}}
+
+    @property
+    def user_purchases(self):
+        to_return = {}
+        for user, purchase_dict in self.users.items():
+            to_return[user] = {}
+            for item, quantity in purchase_dict["purchased"].items():
+                item_name = self.items[item]["label"]
+                to_return[user][item_name] = quantity
+
+        return to_return
 
 class User(UserMixin):
     def __init__(self, id:str, db:Database):
@@ -136,7 +146,11 @@ class User(UserMixin):
     def purchase_item(self, uuid, num_purchased):
         result = self.db.purchase_item(uuid, num_purchased)
         if result[0]:
-            self.db["users"][self.id]["purchased"][uuid] += num_purchased
+            if uuid not in self.db.users[self.id]["purchased"]:
+                self.db.users[self.id]["purchased"][uuid] = num_purchased
+            else:
+                self.db.users[self.id]["purchased"][uuid] += num_purchased
+            self.db.save()
         return result
 
 
@@ -213,9 +227,12 @@ def get_purchase_status():
 def purchase_item():
     r = request.json
     try:
-        result = db.purchase_item(r["uuid"], r["num_purchased"])
-    except KeyError:
+        uuid = r["uuid"]
+        num_purchased = r["num_purchased"]
+    except KeyError as e:
         return make_response({"error": "missing key"}, 400)
+    
+    result = current_user.purchase_item(uuid, num_purchased)
     
     if result[0]:
         return make_response(
@@ -240,3 +257,17 @@ def reload_homepage_info():
         {"result": "success"},
         200
     )
+
+@app.route("/api/thank_you_cards/", methods = ["POST"])
+def get_thank_yous():
+    r = request.json
+    if current_user.is_authenticated or r.get("registry_pw", "") == REG_PW:
+        return make_response(
+            db.user_purchases,
+            200
+        )
+    else:
+        return make_response(
+            {"error": "Failed authentication"},
+            401
+        )
