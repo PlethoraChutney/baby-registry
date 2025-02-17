@@ -19,6 +19,7 @@ async function purchaseItems(uuid, quant) {
         "/api/purchase_item",
         {
             "method": "POST",
+            "credentials": "include",
             "headers": {
                 "Content-Type": "application/json"
             },

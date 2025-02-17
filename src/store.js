@@ -1,6 +1,28 @@
 import { reactive } from "vue";
 
 export const store = reactive({
+    "userName": "",
+    "currentAuthStatus": null,
+    async isAuthenticated() {
+        if (this.currentAuthStatus !== null) {
+            return this.currentAuthStatus;
+        }
+
+        return fetch(
+            "/api/login",
+            {
+                credentials: "include"
+            }
+        )
+        .then(response => response.json())
+        .then(response => {
+            this.currentAuthStatus = response.is_authenticated;
+            return this.currentAuthStatus;
+        })
+    },
+    loginAuthenticated() {
+        this.currentAuthStatus = true;
+    },
     "imageX": 0,
     "imageY": 0,
     "imageShow": false,
@@ -53,5 +75,23 @@ export const store = reactive({
             this.notificationTitle = "";
             this.notificationBody = "";
         }, 500)
+    },
+
+    titleReady: false,
+    homepageInfo: {},
+    async updateHomepageInfo() {
+        return fetch("/api/homepage_info/")
+        .then(response => response.json())
+        .then(info => this.homepageInfo = info)
+    },
+    homepageItinerary(key) {
+        try {
+            return this.homepageInfo.itinerary[key]
+        } catch {
+            return "TBD"
+        }
     }
 })
+
+store.updateHomepageInfo()
+.then(store.titleReady = true)
