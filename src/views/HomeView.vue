@@ -74,4 +74,15 @@ nav {
 .itinerary td:nth-of-type(2) {
   padding-left: 0.5em;
 }
+
+
+@media (width < 800px) {
+  .content {
+    max-width: 90vw;
+  }
+
+  .title {
+    font-size: var(--h1-size);
+  }
+}
 </style>
