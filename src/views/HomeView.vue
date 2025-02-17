@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar.vue";
 import { useMouseImage } from "../composables/mouseImage.js"
 import { store } from "@/store";
 
-const { x, y } = useMouseImage("/images/dancing-baby.gif");
+useMouseImage("/images/dancing-baby.gif");
 </script>
 
 <template>

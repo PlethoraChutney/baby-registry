@@ -7,14 +7,11 @@ export function useMouseImage(imageUrl) {
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile) {
-        return {x, y}
+        return
     }
 
     function update(event) {
-        x.value = event.pageX;
         store.setImageX(event.pageX);
-
-        y.value = event.pageY
         store.setImageY(event.pageY);
     }
 
@@ -26,6 +23,4 @@ export function useMouseImage(imageUrl) {
         store.hideImage();
         window.addEventListener("mousemove", update);
     });
-
-    return {x, y}
 }

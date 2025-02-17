@@ -4,7 +4,7 @@ import { useMouseImage } from '@/composables/mouseImage';
 import { store } from "@/store";
 import router from '@/router';
 
-const { x, y } = useMouseImage("/images/dancing-baby.gif");
+useMouseImage("/images/dancing-baby.gif");
 
 const userId = ref("");
 const password = ref("");
