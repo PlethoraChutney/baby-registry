@@ -24,10 +24,22 @@ import { store } from '@/store';
     border: 6px solid var(--color-ui);
     transform: translate(22rem, 0px);
     transition: transform 200ms linear;
+    z-index: 3;
 }
 
 .show {
     transform: translate(0px, 0px);
     transition: transform 400ms linear(0, 0.998 44.6%, 0.885 52%, 0.85 58.6%, 1 77.4%, 0.976 84.6%, 1);
+}
+
+/* TODO: mobile notifications not working */
+@media (width < 800px) {
+  .notification {
+    left: 10vw;
+    right: 10vw;
+    min-width: 80vw;
+    max-width: 80vw;
+    transform: translate(100vw, 0px);
+  }
 }
 </style>

@@ -51,15 +51,19 @@ onMounted(() => {
 <main>
 
     <NavBar/>
-    <h1 class="title">Here's some shit you can buy!</h1>
     <div class="info">
-        <p>
-            Remember! Gifts are <em>optional</em>! But here are some things we'd like to have
-            for the baby. The pictures are links to where you can buy them new, but we encourage
-            you to look around and try to find them used on Craigslist or Facebook Marketplace or
-            whatever! If you're looking used, we've made some notes on things to look out
-            for in the dropdown!
-        </p>
+        <div>
+            <h1 class="title">Here's some shit you can buy!</h1>
+        </div>
+        <div>
+            <p>
+                Remember! Gifts are <em>optional</em>! But here are some things we'd like to have
+                for the baby. The pictures are links to where you can buy them new, but we encourage
+                you to look around and try to find them used on Craigslist or Facebook Marketplace or
+                whatever! If you're looking used, we've made some notes on things to look out
+                for in the dropdown!
+            </p>
+        </div>
     </div>
     <div class="content">
         <div class="card-container">
@@ -77,31 +81,55 @@ onMounted(() => {
 
 <style scoped>
 main {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-template-rows: max-content max-content 1fr;
     grid-template-areas:
-        "nav nav"
-        "title info"
-        "content content";
+        "nav"
+        "info"
+        "content";
 }
 
 nav {
     grid-area: nav;
 }
 
-.title {
-    grid-area: title;
-    text-align: right;
-    padding-right: 0.5rem;
-}
 
 .info {
     grid-area: info;
-    padding-left: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    width: 100%;
 }
-
+.info div {
+    width: 50%;
+}
 .info p {
     max-width: 40em;
+    margin-right: auto;
+}
+
+.info h1 {
+    text-align: right;
+    margin-left: auto;
+}
+
+@media (width < 800px) {
+  .info {
+    display: block;
+  }
+  .info div {
+    width: 100%;
+  }
+  .info h1 {
+    text-align: left;
+    max-width: 100%;
+  }
+  .info p {
+    max-width: 100%;
+  }
 }
 
 .content {

@@ -35,3 +35,4 @@ public/images/item-images/*
 src/assets/items-info.json
 __pycache__/
 reg_db.json
+homepage-info.json

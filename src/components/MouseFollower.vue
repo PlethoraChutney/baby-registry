@@ -2,49 +2,10 @@
 
 import { ref, computed } from "vue";
 import { store } from "@/store";
-import { onMounted } from "vue";
-import { watch } from "vue";
-
-const targetX = ref(0);
-const targetY = ref(0);
-
-let previous;
-function step(timestep) {
-    let elapsed;
-    if (previous === undefined) {
-        previous = timestep;
-        elapsed = 0
-    } else {
-        elapsed = timestep - previous;
-        previous = timestep;
-    }
-    const proportionMoved = 1 - Math.pow(0.75, elapsed / 100);
-    const distX = store.imageX - targetX.value;
-    const distY = store.imageY - targetY.value;
-    targetX.value += (distX * proportionMoved);
-    targetY.value += (distY * proportionMoved);
-
-    if (store.imageShow) {
-        requestAnimationFrame(step)
-    }
-}
-
-function runAnimation() {
-    targetX.value = store.imageX;
-    targetY.value = store.imageY;
-    requestAnimationFrame(step);
-}
-
-onMounted(runAnimation);
-watch(() => store.imageShow, (newValue) => {
-    if (newValue) {
-        runAnimation();
-    }
-})
 
 const mouseFollower = computed(() => {
   const styleDict = {
-    transform: `translate(${targetX.value}px, ${targetY.value}px)`
+    transform: `translate(${store.imageX}px, ${store.imageY}px)`
   }
   return styleDict;
 })
@@ -62,5 +23,6 @@ const mouseFollower = computed(() => {
     width: 3em;
     top: 0;
     left: 0;
+    transition: transform 1.2s linear(0, 0.544 5.5%, 0.947 11.5%, 1.213 18.1%, 1.298 21.7%, 1.352 25.5%, 1.372 28.2%, 1.379 31.1%, 1.374 34.2%, 1.357 37.6%, 1.307 43.7%, 1.121 61.8%, 1.074 67.8%, 1.04 73.7%, 1.007 84.7%, 1);
 }
 </style>
