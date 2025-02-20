@@ -11,7 +11,8 @@ reg_df.rename(
         "Quantity": "quantity",
         "Link for new": "link",
         "Description": "description",
-        "Specifications if buying used": "specs"
+        "Specifications if buying used": "specs",
+        "Deleted": "deleted"
     },
     inplace = True
 )
