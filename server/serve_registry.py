@@ -258,6 +258,7 @@ def reload_homepage_info():
         200
     )
 
+# TODO: this should use a different password so normal users can't see what others have bought
 @app.route("/api/thank_you_cards/", methods = ["POST"])
 def get_thank_yous():
     r = request.json

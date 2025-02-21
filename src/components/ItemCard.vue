@@ -248,6 +248,13 @@ function abortMultiPurchase() {
     }
 }
 
+@media (width < 800px) {
+  .card {
+    height: min-content;
+    grid-template-rows: max-content min-content 1.5lh 1.5lh;
+  }
+}
+
 .purchased {
     filter: saturate(0);
     opacity: 0.3;
