@@ -16,7 +16,7 @@ const nonstandardQuantity = String(Number(props.item.quantity)) !== String(props
 async function purchaseItems(uuid, quant) {
     const body = JSON.stringify({"uuid": uuid, "num_purchased": quant})
     return fetch(
-        "/api/purchase_item",
+        "/api/purchase_item/",
         {
             "method": "POST",
             "credentials": "include",

@@ -70,25 +70,25 @@ class Database:
     @property
     def users(self):
         return self.db["users"]
+    
+    @property
+    def items(self):
+        return dict(sorted(
+            (x for x in self.db["items"].items() if not x[1]["deleted"]),
+            key = lambda i: i[1]["numeric_quant"] is not None and i[1]["purchased"] == i[1]["numeric_quant"]
+        ))
 
     @property
     def quantities(self):
         return {
-            uuid: item["quantity"] for uuid, item in self.db["items"].items()
+            uuid: item["quantity"] for uuid, item in self.items.items()
         }
     
     @property
     def purchased(self):
         return [
-            (uuid, item["purchased"]) for uuid, item in self.db["items"].items()
+            (uuid, item["purchased"]) for uuid, item in self.items.items()
         ]
-    
-    @property
-    def items(self):
-        return dict(sorted(
-            self.db["items"].items(),
-            key = lambda i: i[1]["numeric_quant"] is not None and i[1]["purchased"] == i[1]["numeric_quant"]
-        ))
     
     def purchase_item(self, uuid:str, num_purchased:int):
         try:
