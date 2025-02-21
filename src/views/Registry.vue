@@ -81,7 +81,7 @@ onMounted(() => {
 
 <style scoped>
 main {
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
     grid-template-rows: max-content max-content 1fr;
     grid-template-areas:
         "nav"
