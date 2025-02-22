@@ -29,9 +29,8 @@ coverage
 
 *.tsbuildinfo
 .vscode
-public/fonts/
 registry-info.csv
-public/images/item-images/*
+public/
 src/assets/items-info.json
 __pycache__/
 reg_db.json

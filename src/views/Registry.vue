@@ -24,28 +24,31 @@ onMounted(() => {
 </script>
 
 <template>
-<dialog ref="dont-buy-stuff">
-    <h1>Stop!</h1>
-    <p>
-        Buying gifts is <em>optional</em>. We invited you to our baby shower
-        because we want you to come have a good time,
-        <em>not</em> because we want things. We made a registry
-        in case you <em>want</em> to buy stuff!
-    </p>
-    <p>
-        By proceeding to look at the registry, you acknowledge that
-        gifts are optional, and that if you've already given us baby
-        stuff that counts as a gift.
-    </p>
-    <div class="button-holder">
-        <button @click="() => {dontBuyStuff.close(); store.buyingAcknowledged = true;}">
-            OK, you freaks!
-        </button>
-        <a href="https://www.google.com/search?&q=cute+cats&udm=2">
-            <button>
-                No, I kinda feel like I have to get you stuff.
+<dialog ref="dont-buy-stuff" class="dont-buy-stuff">
+    <img src="/public/images/do-not-buy.png" alt="">
+    <div>
+        <h1>Stop!</h1>
+        <p>
+            Buying gifts is <em>optional</em>. We invited you to our baby shower
+            because we want you to come have a good time,
+            <em>not</em> because we want things. We made a registry
+            in case you <em>want</em> to buy stuff!
+        </p>
+        <p>
+            By proceeding to look at the registry, you acknowledge that
+            gifts are optional, and that if you've already given us baby
+            stuff that counts as a gift.
+        </p>
+        <div class="button-holder">
+            <button @click="() => {dontBuyStuff.close(); store.buyingAcknowledged = true;}">
+                OK, you freaks!
             </button>
-        </a>
+            <a href="https://www.google.com/search?&q=cute+cats&udm=2">
+                <button>
+                    No, I kinda feel like I have to get you stuff.
+                </button>
+            </a>
+        </div>
     </div>
 </dialog>
 <main>
@@ -146,5 +149,35 @@ nav {
 
 .button-holder a {
     width: 100%;
+}
+
+.dont-buy-stuff[open] {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    grid-template-rows: 100%;
+    gap: 1em;
+}
+.dont-buy-stuff img {
+    width: 100%;
+    max-height: 100%;
+    margin-top: auto;
+    margin-bottom: -1em;
+}
+.dont-buy-stuff > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+
+@media (width < 800px) {
+  .dont-buy-stuff[open] {
+    display: block;
+  }
+  .dont-buy-stuff img {
+    visibility: hidden;
+    display: none;
+  }
 }
 </style>

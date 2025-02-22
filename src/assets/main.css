@@ -92,7 +92,7 @@ dialog::backdrop {
   backdrop-filter: blur(15px);
 }
 
-dialog > p + p {
+dialog p + p {
   margin-top: 0.5lh;
 }
 
