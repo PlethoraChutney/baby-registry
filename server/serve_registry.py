@@ -355,7 +355,7 @@ def get_name_list():
     r = request.json
     if r.get("registry_pw", "") == REG_ADMIN_PW:
         return make_response(
-            db.db,
+            db.name_suggestions,
             200
         )
     else:
