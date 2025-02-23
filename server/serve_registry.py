@@ -4,24 +4,35 @@ import json
 import os
 import sys
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
 
 launch_error = False
 try:
     REG_KEY=os.environ["WALDO_REG_KEY"]
 except KeyError:
-    print("Set WALDO_REG_KEY variable")
+    logger.error("WALDO_REG_KEY not set")
     launch_error = True
 
 try:
     REG_PW=os.environ["WALDO_REG_PW"]
 except KeyError:
-    print("Set WALDO_REG_PW variable")
+    logger.error("WALDO_REG_PW not set")
     launch_error = True
 
 try:
     REG_ADMIN_PW=os.environ["WALDO_REG_ADMIN_PW"]
 except KeyError:
-    print("Set WALDO_REG_ADMIN_PW variable")
+    logger.error("WALDO_REG_ADMIN_PW not set")
+    launch_error = True
+
+try:
+    REG_NAME_LIMIT = int(os.environ["WALDO_REG_NAME_LIMIT"])
+except KeyError:
+    logger.warning("WALDO_REG_NAME_LIMIT not set. Using default of 5")
+    REG_NAME_LIMIT = 5
+except ValueError:
+    logger.error(f"WALDO_REG_NAME_LIMIT set to a bad value of {os.environ['WALDO_REG_NAME_LIMIT']}. Must be an integer.")
     launch_error = True
 
 if launch_error:
@@ -158,20 +169,34 @@ class User(UserMixin):
         self.id = id
         self.db = db
 
+    @property
+    def purchases(self):
+        return self.db.users[self.id]["purchased"]
+
     def purchase_item(self, uuid:str, num_purchased:int) -> tuple[bool, str]:
         result = self.db.purchase_item(uuid, num_purchased)
         if result[0]:
-            if uuid not in self.db.users[self.id]["purchased"]:
-                self.db.users[self.id]["purchased"][uuid] = num_purchased
+            if uuid not in self.purchases:
+                self.purchases[uuid] = num_purchased
             else:
-                self.db.users[self.id]["purchased"][uuid] += num_purchased
+                self.purchases[uuid] += num_purchased
             self.db.save()
         return result
     
-    def suggest_name(self, name:str) -> tuple[bool, str]:
+    @property
+    def name_suggestions(self):
         if self.id not in self.db.name_suggestions:
             self.db.name_suggestions[self.id] = []
+            return []
+        
+        return self.db.name_suggestions[self.id]
+    
+    def suggest_name(self, name:str) -> tuple[bool, str]:
+        if len(self.name_suggestions) >= REG_NAME_LIMIT:
+            return (False, f"You've already suggested {REG_NAME_LIMIT} names!")
 
+        self.name_suggestions.append(name)
+        return (True, "Name submitted")
 
 db = Database()
 
@@ -213,7 +238,7 @@ def login():
                 "success": False,
                 "error": "Wrong password."
             },
-            400
+            401
         )
     
     login_user(db.get_user(r["user_id"]), remember = True)
@@ -290,3 +315,27 @@ def get_thank_yous():
             {"error": "Failed authentication"},
             401
         )
+    
+@app.route("/api/name/", methods = ["GET"])
+@login_required
+def get_name_suggestions():
+    return make_response(
+        current_user.name_suggestions,
+        200
+    )
+    
+@app.route("/api/name/", methods = ["POST"])
+@login_required
+def suggest_name():
+    r = request.json
+    try:
+        result = current_user.suggest_name(r["name"])
+    except KeyError:
+        return make_response(
+            {"error": "No name submitted"},
+            400
+        )
+    return make_response(
+        result[1],
+        200 if result[0] else 400
+    )
