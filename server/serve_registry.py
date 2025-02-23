@@ -44,7 +44,7 @@ def get_quantity_guess(quant:str) -> int|None:
         return None
 
 class Database:
-    def __init__(self, db_location = None, homepage_location = None):
+    def __init__(self, db_location = None, homepage_location = None) -> None:
         if db_location is None:
             db_location = SERVER_SRC_DIR / "reg_db.json"
         self.db_location = db_location
@@ -53,7 +53,7 @@ class Database:
             with open(self.db_location, "r") as f:
                 self.db = json.load(f)
         except FileNotFoundError:
-            self.db = {"items": {}, "users": {}}
+            self.db = {"items": {}, "users": {}, "name_suggestions": {}}
 
         for uuid, item_info in registry_info.items():
             quantity = get_quantity_guess(item_info["quantity"])
@@ -74,34 +74,34 @@ class Database:
         self.homepage_location = homepage_location
         self.reload_homepage()
 
-    def save(self):
+    def save(self) -> None:
         with open(self.db_location, "w") as f:
             json.dump(self.db, f)
 
     @property
-    def users(self):
+    def users(self) -> dict[str, dict]:
         return self.db["users"]
     
     @property
-    def items(self):
+    def items(self) -> dict[str, dict]:
         return dict(sorted(
             (x for x in self.db["items"].items() if not x[1]["deleted"]),
             key = lambda i: i[1]["numeric_quant"] is not None and i[1]["purchased"] == i[1]["numeric_quant"]
         ))
 
     @property
-    def quantities(self):
+    def quantities(self) -> dict[str, str]:
         return {
             uuid: item["quantity"] for uuid, item in self.items.items()
         }
     
     @property
-    def purchased(self):
+    def purchased(self) -> list[tuple]:
         return [
             (uuid, item["purchased"]) for uuid, item in self.items.items()
         ]
     
-    def purchase_item(self, uuid:str, num_purchased:int):
+    def purchase_item(self, uuid:str, num_purchased:int) -> tuple[bool, str]:
         try:
             num_purchased = int(num_purchased)
             if num_purchased < 1:
@@ -122,24 +122,24 @@ class Database:
         except ValueError:
             return (False, "Too many items or negative quantity")
         
-    def reload_homepage(self):
+    def reload_homepage(self) -> None:
         try:
             with open(self.homepage_location, "r") as f:
                 self.homepage = json.load(f)
         except FileNotFoundError:
             self.homepage = {}
 
-    def get_user(self, user_id):
+    def get_user(self, user_id:str) -> "User":
         if user_id not in self.users:
             self.create_user(user_id)
         return User(user_id, self)
 
-    def create_user(self, user_id):
+    def create_user(self, user_id:str) -> None:
         if user_id not in self.users:
             self.users[user_id] = {"purchased": {}}
 
     @property
-    def user_purchases(self):
+    def user_purchases(self) -> dict:
         to_return = {}
         for user, purchase_dict in self.users.items():
             to_return[user] = {}
@@ -148,13 +148,17 @@ class Database:
                 to_return[user][item_name] = quantity
 
         return to_return
+    
+    @property
+    def name_suggestions(self) -> dict:
+        return self.db["name_suggestions"]
 
 class User(UserMixin):
     def __init__(self, id:str, db:Database):
         self.id = id
         self.db = db
 
-    def purchase_item(self, uuid, num_purchased):
+    def purchase_item(self, uuid:str, num_purchased:int) -> tuple[bool, str]:
         result = self.db.purchase_item(uuid, num_purchased)
         if result[0]:
             if uuid not in self.db.users[self.id]["purchased"]:
@@ -163,6 +167,10 @@ class User(UserMixin):
                 self.db.users[self.id]["purchased"][uuid] += num_purchased
             self.db.save()
         return result
+    
+    def suggest_name(self, name:str) -> tuple[bool, str]:
+        if self.id not in self.db.name_suggestions:
+            self.db.name_suggestions[self.id] = []
 
 
 db = Database()
