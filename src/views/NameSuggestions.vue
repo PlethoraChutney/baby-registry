@@ -167,7 +167,6 @@ li::before {
 
 .name-input {
     grid-area: name-input;
-    padding-left: 3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -192,5 +191,22 @@ li::before {
     display: grid;
     grid-template-rows: max-content 1fr;
     grid-template-columns: 100%;
+}
+
+
+@media (width < 800px) {
+  main {
+    grid-template-rows: repeat(4, max-content);
+    grid-template-columns: 100%;
+    grid-template-areas: 
+    "nav"
+    "info"
+    "name-input"
+    "current-names";
+  }
+
+  .info {
+    margin: 0;
+  }
 }
 </style>

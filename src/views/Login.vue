@@ -3,10 +3,15 @@ import { ref } from 'vue';
 import { useMouseImage } from '@/composables/mouseImage';
 import { store } from "@/store";
 import router from '@/router';
+import { computed } from 'vue';
 
 useMouseImage("/images/dancing-baby.gif");
 
-const userId = ref("");
+const firstName = ref("");
+const lastName = ref("");
+const userId = computed(() => {
+    return `${firstName.value} ${lastName.value}`
+})
 const password = ref("");
 
 async function loginUser() {
@@ -49,16 +54,20 @@ async function loginUser() {
     <div>
         <h1>Welcome to the baby shower!</h1>
         <div class="login">
-            <label for="username">
-                What's your name?
-                <input id="username" type="text" v-model="userId" @keyup.enter="loginUser">
+            <label for="firstname">
+                What's your first name?
+                <input id="firstname" type="text" v-model="firstName" @keyup.enter="loginUser">
+            </label>
+            <label for="lastname">
+                What's your last name?
+                <input id="lastname" type="text" v-model="lastName" @keyup.enter="loginUser">
             </label>
             <label for="password">
                 What's the password?
                 <input id="password" type="text" v-model="password" @keyup.enter="loginUser">
             </label>
             <button
-            v-if="userId.length > 0 && password.length > 0"
+            v-if="firstName.length > 0 && lastName.length > 0 && password.length > 0"
             @click="loginUser"
             >
                 Lemme in!
