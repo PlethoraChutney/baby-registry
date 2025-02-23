@@ -8,12 +8,6 @@ import { onBeforeMount } from "vue";
 
 onBeforeMount(() => store.updateItems());
 
-const purchasedItems = ref({});
-function purchased(uuid) {
-    const quant = store.items[uuid].purchased;
-    return quant ?? 0;
-}
-
 // don't buy stuff dialog
 const dontBuyStuff = useTemplateRef("dont-buy-stuff");
 onMounted(() => {
@@ -106,6 +100,10 @@ nav {
     gap: 2em;
     padding: 2em;
     justify-content: center;
+}
+
+button {
+    padding: 0.25em;
 }
 
 .button-holder a {
