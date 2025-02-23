@@ -7,6 +7,7 @@ import { RouterLink } from 'vue-router'
 <nav>
     <RouterLink :to="{name: 'home'}">Home</RouterLink>
     <RouterLink :to="{name: 'registry'}">Registry</RouterLink>
+    <RouterLink :to="{name: 'nameSuggestions'}">Suggest Names</RouterLink>
 </nav>
 </template>
 
@@ -21,6 +22,17 @@ nav {
 
 a {
     text-decoration: none;
+}
+a.router-link-active {
+    border-bottom: 2px solid var(--blue);
+    font-style: italic;
+}
+
+@media (width < 800px) {
+    nav {
+        font-size: var(--base-font-size);
+        font-weight: var(--base-font-weight);
+    }
 }
 
 </style>

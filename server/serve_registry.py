@@ -163,6 +163,9 @@ class Database:
     @property
     def name_suggestions(self) -> dict:
         return self.db["name_suggestions"]
+    
+    def reset_name_suggestions(self, user:str) -> None:
+        self.db["name_suggestions"][user] = []
 
 class User(UserMixin):
     def __init__(self, id:str, db:Database):
@@ -188,15 +191,19 @@ class User(UserMixin):
         if self.id not in self.db.name_suggestions:
             self.db.name_suggestions[self.id] = []
             return []
-        
-        return self.db.name_suggestions[self.id]
+        else:
+            return self.db.name_suggestions[self.id]
     
-    def suggest_name(self, name:str) -> tuple[bool, str]:
+    def suggest_name(self, name:str) -> tuple[bool, dict]:
         if len(self.name_suggestions) >= REG_NAME_LIMIT:
-            return (False, f"You've already suggested {REG_NAME_LIMIT} names!")
+            return (False, {"error": f"You've already suggested {REG_NAME_LIMIT} names!"})
+
+        if name in self.name_suggestions:
+            return (False, {"error": f"You've already suggested {name}!"})
 
         self.name_suggestions.append(name)
-        return (True, "Name submitted")
+        self.db.save()
+        return (True, {"message": "Name submitted"})
 
 db = Database()
 
@@ -273,7 +280,7 @@ def purchase_item():
     try:
         uuid = r["uuid"]
         num_purchased = r["num_purchased"]
-    except KeyError as e:
+    except KeyError:
         return make_response({"error": "missing key"}, 400)
     
     result = current_user.purchase_item(uuid, num_purchased)
@@ -320,7 +327,10 @@ def get_thank_yous():
 @login_required
 def get_name_suggestions():
     return make_response(
-        current_user.name_suggestions,
+        {
+            "limit": REG_NAME_LIMIT,
+            "current_suggestions": current_user.name_suggestions
+        },
         200
     )
     
@@ -339,3 +349,33 @@ def suggest_name():
         result[1],
         200 if result[0] else 400
     )
+
+@app.route("/api/name_list/", methods = ["POST"])
+def get_name_list():
+    r = request.json
+    if r.get("registry_pw", "") == REG_ADMIN_PW:
+        return make_response(
+            db.db,
+            200
+        )
+    else:
+        return make_response(
+            {"error": "Failed authentication"},
+            401
+        )
+
+
+@app.route("/api/reset_names/<user>/", methods = ["POST"])
+def reset_names(user):
+    r = request.json
+    if r.get("registry_pw", "") == REG_ADMIN_PW:
+        db.reset_name_suggestions(user)
+        return make_response(
+            {"result": "success"},
+            200
+        )
+    else:
+        return make_response(
+            {"error": "Failed authentication"},
+            401
+        )

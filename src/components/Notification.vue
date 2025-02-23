@@ -17,9 +17,17 @@ import { store } from '@/store';
     position: absolute;
     right: 2rem;
     bottom: 1rem;
+    min-width: 15rem;
+    width: max-content;
     max-width: 20rem;
-    padding: 1rem;
+    min-height: 5lh;
     height: max-content;
+
+    display: grid;
+    grid-template-rows: max-content 1fr;
+    align-items: center;
+
+    padding: 1rem;
     background-color: var(--yellow);
     border: 6px solid var(--color-ui);
     transform: translate(22rem, 0px);

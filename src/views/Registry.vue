@@ -96,45 +96,6 @@ nav {
     grid-area: nav;
 }
 
-
-.info {
-    grid-area: info;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
-    width: 100%;
-}
-.info div {
-    width: 50%;
-}
-.info p {
-    max-width: 40em;
-    margin-right: auto;
-}
-
-.info h1 {
-    text-align: right;
-    margin-left: auto;
-}
-
-@media (width < 800px) {
-  .info {
-    display: block;
-  }
-  .info div {
-    width: 100%;
-  }
-  .info h1 {
-    text-align: left;
-    max-width: 100%;
-  }
-  .info p {
-    max-width: 100%;
-  }
-}
-
 .content {
     grid-area: content;
 }

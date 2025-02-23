@@ -3,6 +3,7 @@ import { store } from '@/store'
 import HomeView from '@/views/HomeView.vue'
 import Registry from '@/views/Registry.vue'
 import Login from "@/views/Login.vue"
+import NameSuggestions from "@/views/NameSuggestions.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +22,12 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: Login
-    }
+    },
+    {
+      path: "/names",
+      name: "nameSuggestions",
+      component: NameSuggestions
+    },
   ],
 })
 
