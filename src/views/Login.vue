@@ -10,7 +10,7 @@ useMouseImage("/images/dancing-baby.gif");
 const firstName = ref("");
 const lastName = ref("");
 const userId = computed(() => {
-    return `${firstName.value} ${lastName.value}`
+    return `${firstName.value.toLowerCase()} ${lastName.value.toLowerCase()}`
 })
 const password = ref("");
 
