@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
 <dialog ref="dont-buy-stuff" class="dont-buy-stuff">
-    <img src="/public/images/do-not-buy.png" alt="">
+    <img src="/images/do-not-buy.png" alt="">
     <div>
         <h1>Stop!</h1>
         <p>
