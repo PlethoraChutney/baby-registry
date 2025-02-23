@@ -5,17 +5,28 @@ import os
 import sys
 from pathlib import Path
 
+launch_error = False
 try:
     REG_KEY=os.environ["WALDO_REG_KEY"]
 except KeyError:
     print("Set WALDO_REG_KEY variable")
-    sys.exit(1)
+    launch_error = True
 
 try:
     REG_PW=os.environ["WALDO_REG_PW"]
 except KeyError:
     print("Set WALDO_REG_PW variable")
+    launch_error = True
+
+try:
+    REG_ADMIN_PW=os.environ["WALDO_REG_ADMIN_PW"]
+except KeyError:
+    print("Set WALDO_REG_ADMIN_PW variable")
+    launch_error = True
+
+if launch_error:
     sys.exit(1)
+
 
 SERVER_SRC_DIR = Path(__file__).parent
 with open(SERVER_SRC_DIR.parent / "src" / "assets" / "items-info.json", "r") as f:
@@ -258,11 +269,10 @@ def reload_homepage_info():
         200
     )
 
-# TODO: this should use a different password so normal users can't see what others have bought
 @app.route("/api/thank_you_cards/", methods = ["POST"])
 def get_thank_yous():
     r = request.json
-    if current_user.is_authenticated or r.get("registry_pw", "") == REG_PW:
+    if r.get("registry_pw", "") == REG_ADMIN_PW:
         return make_response(
             db.user_purchases,
             200
