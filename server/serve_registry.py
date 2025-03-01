@@ -248,12 +248,7 @@ def login():
 @app.route("/api/get-copy/<page>", methods = ["GET"])
 @login_required
 def homepage_info(page):
-    if page == "homepage":
-        return send_file("homepage-info.json")
-    elif page == "registry":
-        return send_file("registry-text.json")
-    else:
-        return make_response(404)
+    return send_from_directory(SERVER_SRC_DIR / "page-copy/", path = f"{page}.json")
 
 @app.route("/api/calendar/<path>", methods = ["GET"])
 @login_required

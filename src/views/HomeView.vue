@@ -161,6 +161,7 @@ main {
   grid-template-rows: repeat(3, max-content) auto;
   grid-template-columns: auto;
   grid-auto-flow: column;
+  gap: 0.5rem
 }
 
 .subtitle {
@@ -172,7 +173,6 @@ main {
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  margin: 1em 0;
 }
 .calendar-links a {
   height: 100%;
@@ -203,8 +203,7 @@ nav {
   grid-area: unset;
   display: flex;
   flex-direction: column;
-  gap: 0.1em;
-  padding: 1em 0;
+  gap: 0.4em;
   width: 100%;
 }
 .info p {

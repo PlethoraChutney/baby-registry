@@ -7,6 +7,19 @@ import { computed } from 'vue';
 
 import { ref } from 'vue';
 
+const nameCopy = ref({});
+onBeforeMount(updateNameCopy);
+async function updateNameCopy() {
+  return fetch(
+    "/api/get-copy/name-suggestions",
+    {
+      credentials: "include"
+    }
+  )
+  .then(response => response.json())
+  .then(data => nameCopy.value = data)
+}
+
 function numToString(n) {
     if (n > 20) {
         return n.toString();
@@ -96,19 +109,14 @@ async function submitName() {
 
     <div class="info">
         <div>
-            <h1 class="title">Suggest a middle name!</h1>
+            <h1 class="title">{{ nameCopy.title }}</h1>
         </div>
         <div>
-            <p>
-                It's really important to both of us that our kid knows they're part
-                of a community that's larger than just our family! We also can't say
-                no to a bit. Both of these facts together mean that there will be a
-                middle name bracket at the baby shower! The best middle name, as decided
-                by all of you, will be this baby's middle name. This isn't a joke.
-            </p>
-            <p>
-                You can suggest up to {{ numToString(suggestionLimit) }} names. We didn't feel like
-                implementing deletion in this website, so be sure it's a good one before you submit.
+            <p
+            v-for="(item, idx) of nameCopy.body"
+            :key="idx"
+            >
+                {{ item }}
             </p>
         </div>
     </div>

@@ -34,6 +34,5 @@ public/
 src/assets/items-info.json
 __pycache__/
 reg_db.json
-homepage-info.json
-registry-text.json
+server/page-copy/*.json
 *.ics

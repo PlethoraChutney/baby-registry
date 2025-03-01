@@ -34,25 +34,20 @@ onMounted(() => {
 <dialog ref="dont-buy-stuff" class="dont-buy-stuff">
     <img src="/images/do-not-buy.png" alt="">
     <div>
-        <h1>Stop!</h1>
-        <p>
-            Buying gifts is <em>optional</em>. We invited you to our baby shower
-            because we want you to come have a good time,
-            <em>not</em> because we want things. We made a registry
-            in case you <em>want</em> to buy stuff!
-        </p>
-        <p>
-            By proceeding to look at the registry, you acknowledge that
-            gifts are optional, and that if you've already given us baby
-            stuff that counts as a gift.
+        <h1>{{ registryCopy.dialogTitle }}</h1>
+        <p
+        v-for="(item, idx) in registryCopy.dialogBody"
+        :key="idx"
+        >
+            {{ item }}
         </p>
         <div class="button-holder">
             <button @click="() => {dontBuyStuff.close(); store.buyingAcknowledged = true;}">
-                OK, you freaks!
+                {{ registryCopy.dialogAccept }}
             </button>
             <a href="https://www.google.com/search?&q=cute+cats&udm=2">
                 <button>
-                    No, I kinda feel like I have to get you stuff.
+                    {{ registryCopy.dialogReject }}
                 </button>
             </a>
         </div>
