@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, send_file, send_from_directory
 from flask_login import LoginManager, UserMixin, login_user, current_user, login_required
 import json
 import os
@@ -11,7 +11,7 @@ launch_error = False
 try:
     REG_KEY=os.environ["WALDO_REG_KEY"]
 except KeyError:
-    logger.error("WALDO_REG_KEY not set")
+    logger.error("WALDO_REG_KEY secret not set. Use a secure random value!")
     launch_error = True
 
 try:
@@ -55,7 +55,7 @@ def get_quantity_guess(quant:str) -> int|None:
         return None
 
 class Database:
-    def __init__(self, db_location = None, homepage_location = None) -> None:
+    def __init__(self, db_location = None) -> None:
         if db_location is None:
             db_location = SERVER_SRC_DIR / "reg_db.json"
         self.db_location = db_location
@@ -79,11 +79,6 @@ class Database:
                 self.db["items"][uuid] = item_info
 
         self.save()
-
-        if homepage_location is None:
-            homepage_location = SERVER_SRC_DIR / "homepage-info.json"
-        self.homepage_location = homepage_location
-        self.reload_homepage()
 
     def save(self) -> None:
         with open(self.db_location, "w") as f:
@@ -132,13 +127,6 @@ class Database:
             return (False, "Bad request")
         except ValueError:
             return (False, "Too many items or negative quantity")
-        
-    def reload_homepage(self) -> None:
-        try:
-            with open(self.homepage_location, "r") as f:
-                self.homepage = json.load(f)
-        except FileNotFoundError:
-            self.homepage = {}
 
     def get_user(self, user_id:str) -> "User":
         if user_id not in self.users:
@@ -257,6 +245,17 @@ def login():
         200
     )
 
+@app.route("/api/homepage-info/", methods = ["GET"])
+@login_required
+def homepage_info():
+    return send_file("homepage-info.json")
+
+@app.route("/api/calendar/<path>", methods = ["GET"])
+@login_required
+def calendar_info(path):
+    print(path)
+    return send_from_directory(SERVER_SRC_DIR / "calendar/", path, as_attachment = True)
+
 @app.route("/api/items/", methods = ["GET"])
 @login_required
 def get_items():
@@ -292,22 +291,6 @@ def purchase_item():
         )
     else:
         return make_response({"error": result[1]}, 400)
-    
-@app.route("/api/homepage_info/", methods = ["GET"])
-@login_required
-def get_homepage_info():
-    return make_response(
-        db.homepage,
-        200
-    )
-
-@app.route("/api/reload_homepage/", methods = ["GET"])
-def reload_homepage_info():
-    db.reload_homepage()
-    return make_response(
-        {"result": "success"},
-        200
-    )
 
 @app.route("/api/thank_you_cards/", methods = ["POST"])
 def get_thank_yous():

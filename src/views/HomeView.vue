@@ -1,35 +1,120 @@
 <script setup>
+import { onBeforeMount } from "vue";
 import NavBar from "../components/NavBar.vue";
 import { useMouseImage } from "../composables/mouseImage.js"
-import { store } from "@/store";
+import { ref } from "vue";
 
 useMouseImage("/images/dancing-baby.gif");
+
+const homepageInfo = {
+  data: ref({}),
+  get title() {
+    return this.data.value.title ?? "Baby Shower"
+  },
+  get subtitle() {
+    return this.data.value.subtitle ?? ""
+  },
+
+  get eventDatetime() {
+    if (this.data.value.datetime !== undefined) {
+      return new Date(this.data.value.datetime)
+    } else {
+      return undefined
+    }
+  },
+  get eventDate() {
+    return (
+      this.eventDatetime
+      ? this.eventDatetime.toLocaleDateString(
+        [],
+        {
+          dateStyle: "full"
+        }
+      )
+      : "TBD"
+    )
+  },
+  get eventTime() {
+    return (
+      this.eventDatetime
+      ? this.eventDatetime.toLocaleTimeString(
+          [],
+          {hour: "numeric", minute: "2-digit"}
+        )
+      : "TBD"
+    )
+  },
+
+  get location() {
+    return this.data.value.location ?? "TBD"
+  },
+  get locationLink() {
+    return this.data.value.locationLink ?? null
+  },
+  get address() {
+    return this.data.value.address ?? null
+  },
+  get addressLink() {
+    return this.data.value.addressLink ?? null
+  },
+  get googleCalendarLink() {
+    return this.data.value.googleCalendarLink ?? null
+  },
+  get hasIcs() {
+    return this.data.value.hasIcs ?? false
+  }
+};
+
+onBeforeMount(async () => {
+  return fetch(
+    "/api/homepage-info/",
+    {
+      credentials: "include"
+    }
+  )
+  .then(response => response.json())
+  .then(data => {
+    homepageInfo.data.value = data;
+  })
+})
 </script>
 
 <template>
   <main>
     <NavBar/>
 
-    <div class="content" v-if="store.titleReady">
-      <h1 class="title">{{ store.homepageInfo.title}}</h1>
-      <p class="subtitle">{{ store.homepageInfo.subtitle}}</p>
+    <div class="content">
+      <h1 class="title">{{ homepageInfo.title }}</h1>
+      <p class="subtitle">{{ homepageInfo.subtitle }}</p>
 
-      <table class="itinerary">
-        <tbody>
-          <tr>
-            <td>When?</td>
-            <td>
-              {{ store.homepageItinerary('date') }}
-              at
-              {{ store.homepageItinerary('time') }}
-            </td>
-          </tr>
-          <tr>
-            <td>Where?</td>
-            <td>{{ store.homepageItinerary('location') }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="calendar-links">
+        <a
+        v-if="homepageInfo.googleCalendarLink !== null"
+        class="calendar-link"
+        :href="homepageInfo.googleCalendarLink"
+        target="_blank"
+        rel="noopener noreferrer"
+        >
+          Add to Google Calendar
+        </a>
+        <a
+        v-if="homepageInfo.hasIcs"
+        href="/api/calendar/baby-shower.ics"
+        download
+        >
+          Download iCal event
+        </a>
+      </div>
+
+      <p>
+        Please join us at {{ homepageInfo.eventTime }}
+        on {{ homepageInfo.eventDate }} at
+        <a :href="homepageInfo.locationLink">{{ homepageInfo.location }}</a>!
+      </p>
+
+      <p>
+        <a :href="homepageInfo.addressLink">{{ homepageInfo.address }}</a>
+      </p>
 
     </div>
 
@@ -43,6 +128,28 @@ main {
   grid-template-areas:
     "nav"
     "content";
+}
+
+.subtitle {
+  font-size: var(--h2-size);
+}
+
+.calendar-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin: 1em 0;
+}
+.calendar-links a {
+  height: 100%;
+  text-decoration: none;
+  border: 1px solid var(--blue);
+  padding: 0.5em;
+}
+
+p + p {
+  margin-top: 1em;
 }
 
 nav {

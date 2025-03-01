@@ -35,7 +35,6 @@ async function loginUser() {
     .then(response => response.json())
     .then(response => {
         if (response.success) {
-            store.updateHomepageInfo();
             store.userId = response.user_id;
             store.loginAuthenticated();
             router.push({name: "home"});

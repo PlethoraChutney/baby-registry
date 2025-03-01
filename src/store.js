@@ -77,22 +77,4 @@ export const store = reactive({
             this.notificationBody = "";
         }, 500)
     },
-
-    titleReady: false,
-    homepageInfo: {},
-    async updateHomepageInfo() {
-        return fetch("/api/homepage_info/")
-        .then(response => response.json())
-        .then(info => this.homepageInfo = info)
-    },
-    homepageItinerary(key) {
-        try {
-            return this.homepageInfo.itinerary[key]
-        } catch {
-            return "TBD"
-        }
-    }
 })
-
-store.updateHomepageInfo()
-.then(store.titleReady = true)
