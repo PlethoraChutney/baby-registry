@@ -253,7 +253,6 @@ def homepage_info():
 @app.route("/api/calendar/<path>", methods = ["GET"])
 @login_required
 def calendar_info(path):
-    print(path)
     return send_from_directory(SERVER_SRC_DIR / "calendar/", path, as_attachment = True)
 
 @app.route("/api/items/", methods = ["GET"])

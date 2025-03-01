@@ -1,10 +1,9 @@
 <script setup>
 import { onBeforeMount } from "vue";
 import NavBar from "../components/NavBar.vue";
-import { useMouseImage } from "../composables/mouseImage.js"
 import { ref } from "vue";
-
-useMouseImage("/images/dancing-baby.gif");
+import L from "leaflet";
+import "leaflet/dist/leaflet.css"
 
 const homepageInfo = {
   data: ref({}),
@@ -62,6 +61,10 @@ const homepageInfo = {
   },
   get hasIcs() {
     return this.data.value.hasIcs ?? false
+  },
+
+  get latLon() {
+    return this.data.value.latLon ?? null
   }
 };
 
@@ -75,6 +78,24 @@ onBeforeMount(async () => {
   .then(response => response.json())
   .then(data => {
     homepageInfo.data.value = data;
+    return data
+  })
+  .then(data => {
+    if (data.latLon !== null) {
+      const latLon = data.latLon.split(", ");
+      const lat = Number(latLon[0]);
+      const lon = Number(latLon[1]);
+
+      let map = L.map('map').setView([lat, lon], 16);
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      L.marker([lat, lon]).addTo(map)
+      .bindTooltip("Steeplejack Brewing")
+      .openTooltip();
+    }
   })
 })
 </script>
@@ -84,8 +105,10 @@ onBeforeMount(async () => {
     <NavBar/>
 
     <div class="content">
-      <h1 class="title">{{ homepageInfo.title }}</h1>
-      <p class="subtitle">{{ homepageInfo.subtitle }}</p>
+      <div class="titles">
+        <h1 class="title">{{ homepageInfo.title }}</h1>
+        <p class="subtitle">{{ homepageInfo.subtitle }}</p>
+      </div>
 
       <div class="calendar-links">
         <a
@@ -106,15 +129,18 @@ onBeforeMount(async () => {
         </a>
       </div>
 
-      <p>
-        Please join us at {{ homepageInfo.eventTime }}
-        on {{ homepageInfo.eventDate }} at
-        <a :href="homepageInfo.locationLink">{{ homepageInfo.location }}</a>!
-      </p>
+      <div class="info">
+        <p>
+          Please join us at {{ homepageInfo.eventTime }}
+          on {{ homepageInfo.eventDate }} at
+          <a :href="homepageInfo.locationLink">{{ homepageInfo.location }}</a>!
+        </p>
+        <p>
+          <a :href="homepageInfo.addressLink">{{ homepageInfo.address }}</a>
+        </p>
+      </div>
 
-      <p>
-        <a :href="homepageInfo.addressLink">{{ homepageInfo.address }}</a>
-      </p>
+      <div id="map" v-show="homepageInfo.latLon !== null"></div>
 
     </div>
 
@@ -128,6 +154,13 @@ main {
   grid-template-areas:
     "nav"
     "content";
+}
+
+.content {
+  display: grid;
+  grid-template-rows: repeat(3, max-content) auto;
+  grid-template-columns: auto;
+  grid-auto-flow: column;
 }
 
 .subtitle {
@@ -148,10 +181,6 @@ main {
   padding: 0.5em;
 }
 
-p + p {
-  margin-top: 1em;
-}
-
 nav {
   grid-area: nav;
 }
@@ -170,6 +199,20 @@ nav {
   -webkit-user-select: none;
 }
 
+.info {
+  grid-area: unset;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  padding: 1em 0;
+  width: 100%;
+}
+.info p {
+  margin: 0;
+  width: 100%;
+  max-width: unset;
+}
+
 .itinerary {
   width: 100%;
   font-size: var(--h2-size);
@@ -180,6 +223,12 @@ nav {
 }
 .itinerary td:nth-of-type(2) {
   padding-left: 0.5em;
+}
+
+#map {
+  height: 100%;
+  min-height: 20rem;
+  width: 100%;
 }
 
 
