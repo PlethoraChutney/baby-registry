@@ -70,7 +70,7 @@ const homepageInfo = {
 
 onBeforeMount(async () => {
   return fetch(
-    "/api/homepage-info/",
+    "/api/get-copy/homepage",
     {
       credentials: "include"
     }

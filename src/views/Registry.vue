@@ -8,6 +8,19 @@ import { onBeforeMount } from "vue";
 
 onBeforeMount(() => store.updateItems());
 
+const registryCopy = ref({});
+onBeforeMount(updateRegistryCopy);
+async function updateRegistryCopy() {
+  return fetch(
+    "/api/get-copy/registry",
+    {
+      credentials: "include"
+    }
+  )
+  .then(response => response.json())
+  .then(data => registryCopy.value = data)
+}
+
 // don't buy stuff dialog
 const dontBuyStuff = useTemplateRef("dont-buy-stuff");
 onMounted(() => {
@@ -50,15 +63,11 @@ onMounted(() => {
     <NavBar/>
     <div class="info">
         <div>
-            <h1 class="title">Here's some shit you can buy!</h1>
+            <h1 class="title">{{ registryCopy.title }}</h1>
         </div>
         <div>
             <p>
-                Remember! Gifts are <em>optional</em>! But here are some things we'd like to have
-                for the baby. The pictures are links to where you can buy them new, but we encourage
-                you to look around and try to find them used on Craigslist or Facebook Marketplace or
-                whatever! If you're looking used, we've made some notes on things to look out
-                for in the dropdown!
+                {{ registryCopy.body }}
             </p>
         </div>
     </div>

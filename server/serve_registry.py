@@ -245,10 +245,15 @@ def login():
         200
     )
 
-@app.route("/api/homepage-info/", methods = ["GET"])
+@app.route("/api/get-copy/<page>", methods = ["GET"])
 @login_required
-def homepage_info():
-    return send_file("homepage-info.json")
+def homepage_info(page):
+    if page == "homepage":
+        return send_file("homepage-info.json")
+    elif page == "registry":
+        return send_file("registry-text.json")
+    else:
+        return make_response(404)
 
 @app.route("/api/calendar/<path>", methods = ["GET"])
 @login_required
