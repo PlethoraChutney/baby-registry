@@ -177,8 +177,12 @@ main {
 .calendar-links a {
   height: 100%;
   text-decoration: none;
-  border: 1px solid var(--blue);
+  background-color: var(--blue);
+  color: var(--color-bg);
   padding: 0.5em;
+}
+.calendar-links a:hover {
+  background-color: var(--blue-2);
 }
 
 nav {
@@ -238,6 +242,14 @@ nav {
 
   .title {
     font-size: var(--h1-size);
+  }
+  .subtitle {
+    font-size: inherit;
+  }
+
+  .calendar-links a {
+    padding: 0.25em;
+    width: 40%;
   }
 }
 </style>
