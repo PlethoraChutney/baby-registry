@@ -52,6 +52,7 @@ onMounted(() => {
             </a>
         </div>
     </div>
+    <img src="/images/do-not-buy-2.png" alt="">
 </dialog>
 <main>
 
@@ -119,7 +120,7 @@ button {
 
 .dont-buy-stuff[open] {
     display: grid;
-    grid-template-columns: 30% 1fr;
+    grid-template-columns: 20% 1fr 20%;
     grid-template-rows: 100%;
     gap: 1em;
 }

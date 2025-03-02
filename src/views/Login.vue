@@ -4,6 +4,7 @@ import { useMouseImage } from '@/composables/mouseImage';
 import { store } from "@/store";
 import router from '@/router';
 import { computed } from 'vue';
+import Blob from '@/components/Blob.vue';
 
 useMouseImage("/images/dancing-baby.gif");
 
@@ -50,6 +51,11 @@ async function loginUser() {
 
 <template>
 <main>
+    <Blob
+    v-for="i in Array(15).fill().map((x,i)=>i)"
+    :key="i"
+    :idx="i % 5"
+    />
     <div>
         <h1>Welcome to the baby shower!</h1>
         <div class="login">
