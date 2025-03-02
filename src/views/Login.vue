@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useMouseImage } from '@/composables/mouseImage';
 import { store } from "@/store";
 import router from '@/router';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import Blob from '@/components/Blob.vue';
 
 useMouseImage("/images/dancing-baby.gif");
@@ -47,6 +47,49 @@ async function loginUser() {
         }
     })
 }
+
+// peekaboos
+const firstnameInputActive = ref(false);
+const firstnamePeekabooX = computed(() => {
+    if (firstName.value.length > 0 && !firstnameInputActive.value) {
+        return "0px"
+    } else {
+        return "-100%"
+    }
+})
+const firstnamePeekaboo = () => {
+    return {
+        "transform": `translate(${firstnamePeekabooX.value}, -25vh)`
+    }
+}
+
+const lastnameInputActive = ref(false);
+const lastnamePeekabooX = computed(() => {
+    if (lastName.value.length > 0 && !lastnameInputActive.value) {
+        return "0px"
+    } else {
+        return "100%"
+    }
+})
+const lastnamePeekaboo = () => {
+    return {
+        "transform": `translate(${lastnamePeekabooX.value}, 0px)`
+    }
+}
+
+const passwordInputActive = ref(false);
+const passwordPeekabooX = computed(() => {
+    if (password.value.length > 0 && !passwordInputActive.value) {
+        return "0px"
+    } else {
+        return "-100%"
+    }
+})
+const passwordPeekaboo = () => {
+    return {
+        "transform": `translate(${passwordPeekabooX.value}, 25vh)`
+    }
+}
 </script>
 
 <template>
@@ -56,20 +99,49 @@ async function loginUser() {
     :key="i"
     :idx="i % 5"
     />
+    <img src="/images/peekaboo-1.png" alt="" class="peekaboo left" :style="firstnamePeekaboo()">
+    <img src="/images/peekaboo-3.png" alt="" class="peekaboo right" :style="lastnamePeekaboo()">
+    <img src="/images/peekaboo-2.png" alt="" class="peekaboo left" :style="passwordPeekaboo()">
     <div>
         <h1>Welcome to the baby shower!</h1>
         <div class="login">
             <label for="firstname">
                 What's your first name?
-                <input id="firstname" type="text" v-model="firstName" @keyup.enter="loginUser">
+
+                <input
+                id="firstname"
+                type="text"
+                v-model="firstName"
+                @keyup.enter="loginUser"
+                @focus="firstnameInputActive = true"
+                @blur="firstnameInputActive = false"
+                >
             </label>
             <label for="lastname">
                 What's your last name?
-                <input id="lastname" type="text" v-model="lastName" @keyup.enter="loginUser">
+
+                <input
+                id="lastname"
+                type="text"
+                v-model="lastName"
+                @keyup.enter="loginUser"
+                ref="lastnameInput"
+                @focus="lastnameInputActive = true"
+                @blur="lastnameInputActive = false"
+                >
             </label>
             <label for="password">
                 What's the password?
-                <input id="password" type="text" v-model="password" @keyup.enter="loginUser">
+
+                <input
+                id="password"
+                type="text"
+                v-model="password"
+                @keyup.enter="loginUser"
+                ref="passwordInput"
+                @focus="passwordInputActive = true"
+                @blur="passwordInputActive = false"
+                >
             </label>
             <button
             v-if="firstName.length > 0 && lastName.length > 0 && password.length > 0"
@@ -123,6 +195,20 @@ input {
 button {
     width: 100%;
     padding: 0.25em;
+}
+
+.peekaboo {
+    position: absolute;
+    height: 50vh;
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    right: 0;
 }
 
 </style>
