@@ -61,8 +61,10 @@ onMounted(() => {
             <h1 class="title">{{ registryCopy.title }}</h1>
         </div>
         <div>
-            <p>
-                {{ registryCopy.body }}
+            <p
+            v-for="(item, idx) in registryCopy.body"
+            :key="idx"
+            v-html="item">
             </p>
         </div>
     </div>
@@ -97,6 +99,7 @@ nav {
 .content {
     grid-area: content;
 }
+
 .card-container {
     width: 100%;
     display: grid;

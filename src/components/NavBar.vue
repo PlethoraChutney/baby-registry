@@ -1,10 +1,11 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+const props = defineProps(["darkBg"])
 
 </script>
 
 <template>
-<nav>
+<nav :class="{'dark-bg': props.darkBg}">
     <RouterLink :to="{name: 'home'}">Home</RouterLink>
     <RouterLink :to="{name: 'registry'}">Registry</RouterLink>
     <RouterLink :to="{name: 'nameSuggestions'}">Suggest Names</RouterLink>
@@ -26,6 +27,13 @@ a {
 a.router-link-active {
     border-bottom: 2px solid var(--blue);
     font-style: italic;
+}
+
+nav.dark-bg a {
+    color: var(--color-bg)
+}
+nav.dark-bg a.router-link-active {
+    border-color: var(--color-bg);
 }
 
 @media (width < 800px) {

@@ -2,7 +2,6 @@
 import { onBeforeMount } from "vue";
 import NavBar from "../components/NavBar.vue";
 import { ref } from "vue";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css"
 
 const homepageInfo = {
@@ -80,67 +79,52 @@ onBeforeMount(async () => {
     homepageInfo.data.value = data;
     return data
   })
-  .then(data => {
-    if (data.latLon !== null) {
-      const latLon = data.latLon.split(", ");
-      const lat = Number(latLon[0]);
-      const lon = Number(latLon[1]);
-
-      let map = L.map('map').setView([lat, lon], 16);
-
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-
-      L.marker([lat, lon]).addTo(map)
-      .bindTooltip("Steeplejack Brewing")
-      .openTooltip();
-    }
-  })
 })
 </script>
 
 <template>
   <main>
-    <NavBar/>
+    <NavBar :dark-bg="true"/>
 
     <div class="content">
       <div class="titles">
-        <h1 class="title">{{ homepageInfo.title }}</h1>
-        <p class="subtitle">{{ homepageInfo.subtitle }}</p>
+        <div>
+          <h1 class="title">{{ homepageInfo.title }}</h1>
+          <p class="subtitle">{{ homepageInfo.subtitle }}</p>
+        </div>
       </div>
 
-      <div class="calendar-links">
-        <a
-        v-if="homepageInfo.googleCalendarLink !== null"
-        class="calendar-link"
-        :href="homepageInfo.googleCalendarLink"
-        target="_blank"
-        rel="noopener noreferrer"
-        >
-          Add to Google Calendar
-        </a>
-        <a
-        v-if="homepageInfo.hasIcs"
-        href="/api/calendar/baby-shower.ics"
-        download
-        >
-          Download iCal event
-        </a>
-      </div>
+      <div class="itinerary">
+        <div>
+          <p>
+            Please join us at {{ homepageInfo.eventTime }}
+            on {{ homepageInfo.eventDate }} at
+            <a :href="homepageInfo.locationLink">{{ homepageInfo.location }}</a>!
+          </p>
+          <p>
+            <a :href="homepageInfo.addressLink">{{ homepageInfo.address }}</a>
+          </p>
+        </div>
 
-      <div class="info">
-        <p>
-          Please join us at {{ homepageInfo.eventTime }}
-          on {{ homepageInfo.eventDate }} at
-          <a :href="homepageInfo.locationLink">{{ homepageInfo.location }}</a>!
-        </p>
-        <p>
-          <a :href="homepageInfo.addressLink">{{ homepageInfo.address }}</a>
-        </p>
+        <div class="calendar-links">
+          <a
+          v-if="homepageInfo.googleCalendarLink !== null"
+          class="calendar-link"
+          :href="homepageInfo.googleCalendarLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          >
+            Add to Google Calendar
+          </a>
+          <a
+          v-if="homepageInfo.hasIcs"
+          href="/api/calendar/baby-shower.ics"
+          download
+          >
+            Download iCal event
+          </a>
+        </div>
       </div>
-
-      <div id="map" v-show="homepageInfo.latLon !== null"></div>
 
     </div>
 
@@ -149,40 +133,16 @@ onBeforeMount(async () => {
 
 <style scoped>
 main {
+  background-image: url(/images/homepage-background.jpg);
+  background-position: center;
+}
+
+main {
   grid-template-columns: 1fr;
   grid-template-rows: max-content 1fr;
   grid-template-areas:
     "nav"
     "content";
-}
-
-.content {
-  display: grid;
-  grid-template-rows: repeat(3, max-content) auto;
-  grid-template-columns: auto;
-  grid-auto-flow: column;
-  gap: 0.5rem
-}
-
-.subtitle {
-  font-size: var(--h2-size);
-}
-
-.calendar-links {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-}
-.calendar-links a {
-  height: 100%;
-  text-decoration: none;
-  background-color: var(--blue);
-  color: var(--color-bg);
-  padding: 0.5em;
-}
-.calendar-links a:hover {
-  background-color: var(--blue-2);
 }
 
 nav {
@@ -195,6 +155,29 @@ nav {
   max-width: 50vw;
   height: 100%;
   margin: 0 auto;
+
+  display: grid;
+  grid-template-rows: auto repeat(1, max-content);
+  grid-template-columns: auto;
+  grid-template-areas:
+  "titles"
+  "info";
+  gap: 0.5rem
+}
+
+.titles {
+  grid-area: titles;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.titles div,
+.itinerary {
+  background-color: color-mix(in srgb, var(--color-bg) 60%, transparent);
+  backdrop-filter: blur(3px);
+  padding: 1em;
 }
 
 .title {
@@ -203,41 +186,63 @@ nav {
   -webkit-user-select: none;
 }
 
-.info {
-  grid-area: unset;
+.subtitle {
+  font-size: var(--h2-size);
+}
+.title,
+.subtitle {
+  width: 100%;
+  text-align: center;
+}
+
+.calendar-links {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125em;
+  flex-shrink: 1;
+  width: max-content;
+}
+.calendar-links a {
+  text-decoration: none;
+  background-color: var(--blue);
+  color: var(--color-bg);
+  padding: 0.25em;
+  width: 100%;
+  font-size: var(--base-font-size);
+}
+.calendar-links a:hover {
+  background-color: var(--blue-2);
+}
+
+.itinerary {
+  grid-area: info;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 0.4em;
   width: 100%;
+  font-size: var(--h3-size);
 }
-.info p {
+.itinerary div:first-child{
+  flex-grow: 1;
+}
+.itinerary p {
   margin: 0;
   width: 100%;
   max-width: unset;
 }
 
-.itinerary {
-  width: 100%;
-  font-size: var(--h2-size);
-}
-.itinerary td:first-of-type {
-  text-align: right;
-  padding-right: 0.5em;
-}
-.itinerary td:nth-of-type(2) {
-  padding-left: 0.5em;
-}
-
-#map {
-  height: 100%;
-  min-height: 20rem;
-  width: 100%;
-}
-
-
 @media (width < 800px) {
+  main {
+    background-image: url(/images/homepage-background-mobile.jpg);
+  }
   .content {
     max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .title {
@@ -247,9 +252,13 @@ nav {
     font-size: inherit;
   }
 
+  .itinerary {
+    flex-direction: column;
+  }
+
+  .calendar-links,
   .calendar-links a {
-    padding: 0.25em;
-    width: 40%;
+    width: 100%;
   }
 }
 </style>
