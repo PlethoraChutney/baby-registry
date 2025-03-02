@@ -211,4 +211,18 @@ button {
     right: 0;
 }
 
+@media (width < 800px) {
+    .peekaboo {
+        display: none;
+        visibility: hidden;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 1em;
+        gap: 0;
+    }
+}
+
 </style>
