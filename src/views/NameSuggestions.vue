@@ -1,9 +1,12 @@
 <script setup>
 import NavBar from '@/components/NavBar.vue';
+import Blob from '@/components/Blob.vue';
+
 import { store } from '@/store';
 import { useTemplateRef } from 'vue';
 import { onBeforeMount } from 'vue';
 import { computed } from 'vue';
+
 
 import { ref } from 'vue';
 
@@ -104,6 +107,13 @@ async function submitName() {
 </script>
 
 <template>
+
+<Blob
+    v-for="i in Array(15).fill().map((x,i)=>i)"
+    :key="i"
+    :idx="i % 5"
+    :offset="[30, 30]"
+/>
 <main>
     <NavBar/>
 

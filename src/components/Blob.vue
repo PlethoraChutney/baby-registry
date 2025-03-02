@@ -2,6 +2,7 @@
 
 const props = defineProps({
     idx: {type: Number, required: false},
+    translation: {type: Array, required: false},
     offset: {type: Array, required: false},
     rotation: {type: Number, required: false},
     width: {type: Number, required: false},
@@ -13,8 +14,9 @@ const blobIdx = props.idx ?? Math.floor(Math.random() * numBlobs);
 const blobSrc = `/images/blobs/blob-${blobIdx}.svg`;
 
 const blobRotation = props.rotation ?? Math.random() * 360;
-const blobTranslationX = props.offset ? props.offset[0] : 100 * (Math.random() - 0.5);
-const blobTranslationY = props.offset ? props.offset[1] : 100 * (Math.random() - 0.5);
+const offset = props.offset ?? [0, 0];
+const blobTranslationX = props.translation ? props.translation[0] : 100 * (Math.random() - 0.5) + offset[0];
+const blobTranslationY = props.translation ? props.translation[1] : 100 * (Math.random() - 0.5) + offset[1];
 
 const blobWidth = props.width ?? (Math.random() + 0.1) * 30;
 
