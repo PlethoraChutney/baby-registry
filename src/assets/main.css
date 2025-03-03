@@ -108,22 +108,19 @@ dialog::backdrop {
 .info {
   grid-area: info;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   width: 100%;
 }
 .info div {
-  width: 50%;
-}
-.info p {
-  max-width: 40em;
-  margin-right: auto;
+  width: 100%;
+  max-width: 50rem;
 }
 
 .info h1 {
-  text-align: right;
+  text-align: left;
   margin-left: auto;
 }
 

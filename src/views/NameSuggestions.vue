@@ -113,8 +113,9 @@ async function submitName() {
     :key="i"
     :idx="i % 5"
     :offset="[30, 30]"
+    :opacity="0.2"
 />
-<main>
+<main class="has-blobs">
     <NavBar/>
 
     <div class="info">

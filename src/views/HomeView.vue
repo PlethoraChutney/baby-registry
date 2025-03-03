@@ -99,10 +99,18 @@ onBeforeMount(async () => {
           <p>
             Please join us at {{ homepageInfo.eventTime }}
             on {{ homepageInfo.eventDate }} at
-            <a :href="homepageInfo.locationLink">{{ homepageInfo.location }}</a>!
+            <a
+            :href="homepageInfo.locationLink" 
+            target="_blank"
+            rel="noopener noreferrer"
+            >{{ homepageInfo.location }}</a>!
           </p>
           <p>
-            <a :href="homepageInfo.addressLink">{{ homepageInfo.address }}</a>
+            <a
+            :href="homepageInfo.addressLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            >{{ homepageInfo.address }}</a>
           </p>
         </div>
 
