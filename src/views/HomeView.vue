@@ -15,7 +15,7 @@ const homepageInfo = {
 
   get eventDatetime() {
     if (this.data.value.datetime !== undefined) {
-      return new Date(this.data.value.datetime)
+      return new Date(Date.parse(this.data.value.datetime))
     } else {
       return undefined
     }

@@ -128,18 +128,19 @@ button {
 }
 
 .dont-buy-stuff[open] {
-    display: grid;
-    grid-template-columns: 20% 1fr 20%;
-    grid-template-rows: 100%;
+    display: flex;
+    flex-direction: row;
     gap: 1em;
 }
 .dont-buy-stuff img {
-    width: 100%;
+    width: 25%;
     max-height: 100%;
     margin-top: auto;
     margin-bottom: -1em;
 }
 .dont-buy-stuff > div {
+    width: 50%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -154,6 +155,9 @@ button {
   .dont-buy-stuff img {
     visibility: hidden;
     display: none;
+  }
+  .dont-buy-stuff > div {
+    width: 100%;
   }
 }
 </style>
