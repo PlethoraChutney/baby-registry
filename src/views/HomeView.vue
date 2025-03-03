@@ -2,7 +2,9 @@
 import { onBeforeMount } from "vue";
 import NavBar from "../components/NavBar.vue";
 import { ref } from "vue";
-import "leaflet/dist/leaflet.css"
+import { useMouseImage } from "@/composables/mouseImage";
+
+useMouseImage("/images/dancing-baby.gif");
 
 const homepageInfo = {
   data: ref({}),
