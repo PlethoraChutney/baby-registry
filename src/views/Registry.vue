@@ -1,5 +1,6 @@
 <script setup>
 import NavBar from "../components/NavBar.vue";
+import Blob from "@/components/Blob.vue";
 import ItemCard from "@/components/ItemCard.vue";
 import { ref, useTemplateRef } from "vue";
 import { onMounted } from "vue";
@@ -55,6 +56,14 @@ onMounted(() => {
     <img src="/images/do-not-buy-2.png" alt="">
 </dialog>
 <main>
+
+    <Blob
+        v-for="i in Array(15).fill().map((x,i)=>i)"
+        :key="i"
+        :idx="i % 5"
+        :opacity="0.2"
+        :offset="[40, 40]"
+    />
 
     <NavBar/>
     <div class="info">

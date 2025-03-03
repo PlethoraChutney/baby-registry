@@ -226,6 +226,7 @@ function abortMultiPurchase() {
 
     width: var(--card-width);
     height: calc(var(--card-width) * 1.618);
+    background-color: var(--color-bg);
 
     font-size: 0.9rem;
 
