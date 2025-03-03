@@ -199,7 +199,9 @@ button {
 
 .peekaboo {
     position: absolute;
-    height: 50vh;
+    max-height: 50vh;
+	max-width: 30vw;
+	aspect-ratio: 1;
     transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
