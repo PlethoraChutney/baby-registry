@@ -23,11 +23,6 @@ main {
   overflow-y: auto;
 }
 
-#app,
-main {
-  scrollbar-gutter: stable;
-}
-
 .no-select {
   user-select: none;
   -webkit-user-select: none;
