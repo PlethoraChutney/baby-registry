@@ -145,6 +145,7 @@ onBeforeMount(async () => {
 main {
   background-image: url(/images/homepage-background.jpg);
   background-position: center;
+  background-size: contain;
 }
 
 main {

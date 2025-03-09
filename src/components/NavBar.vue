@@ -30,10 +30,10 @@ a.router-link-active {
 }
 
 nav.dark-bg a {
-    color: var(--color-bg)
+    color: var(--flexoki-base-50)
 }
 nav.dark-bg a.router-link-active {
-    border-color: var(--color-bg);
+    border-color: var(--flexoki-base-50);
 }
 
 @media (width < 800px) {
